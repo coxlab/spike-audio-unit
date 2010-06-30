@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleExecutable</key>
+	<string>SpikeAudioUnit_CocoaViewFactory</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.audiounit.SpikeAudioUnit</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>NSMainNibFile</key>
+	<string>SpikeAudioUnit_CocoaView</string>
+	<key>NSPrincipalClass</key>
+	<string>SpikeAudioUnit_CocoaViewFactory</string>
+</dict>
+</plist>
