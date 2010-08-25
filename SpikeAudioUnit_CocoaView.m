@@ -89,11 +89,13 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 	if (mAU) [self _removeListeners];
 	mAU = inAU;
     
-   	mParameter[0].mAudioUnit = inAU;
-	mParameter[0].mParameterID = kThresholdParam;
-	mParameter[0].mScope = kAudioUnitScope_Global;
-	mParameter[0].mElement = 0;	
-
+   	for(int i = 0; i < kNumberOfParameters; i++){
+        mParameter[i].mAudioUnit = inAU;
+        mParameter[i].mScope = kAudioUnitScope_Global;
+        mParameter[i].mElement = 0;
+        mParameter[i].mParameterID = i; // ugly
+    }
+    
 	// add new listeners
 	[self _addListeners];
 	
@@ -304,6 +306,18 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 	switch (inParameter->mParameterID) {
 		case kThresholdParam:
             [self setTriggerThreshold:inValue];
+            break;
+        case kMinAmplitudeViewParam:
+            renderer->setAmplitudeRangeMin(inValue);
+            break;
+        case kMaxAmplitudeViewParam:
+            renderer->setAmplitudeRangeMax(inValue);
+            break;
+        case kMinTimeViewParam:
+            renderer->setTimeRangeMin(inValue);
+            break;
+        case kMaxTimeViewParam:
+            renderer->setTimeRangeMax(inValue);
             break;
 	}
 }

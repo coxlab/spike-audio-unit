@@ -65,14 +65,25 @@ using namespace boost;
 #pragma mark ____SpikeAudioUnit Parameters
 
 // parameters
-static const float kDefaultValue_ThresholdParam = -0.5;
+static const float kDefaultValue_ThresholdParam = -0.000035;
+static const float kDefaultValue_MinAmplitudeViewParam = -0.000100;
+static const float kDefaultValue_MaxAmplitudeViewParam = 0.000100;
+static const float kDefaultValue_MinTimeViewParam = -0.00125;
+static const float kDefaultValue_MaxTimeViewParam = 0.00125;
 
 static CFStringRef kThresholdParamName = CFSTR("Trigger Threshold");
+static CFStringRef kMinAmplitudeViewParamName = CFSTR("Min Amplitude");
+static CFStringRef kMaxAmplitudeViewParamName = CFSTR("Max Amplitude");
+static CFStringRef kMinTimeViewParamName = CFSTR("Min Time");
+static CFStringRef kMaxTimeViewParamName = CFSTR("Max Time");
 
 enum {
-	kThresholdParam =0,
-	//Add your parameters here...
-	kNumberOfParameters=1
+    kThresholdParam =0,
+    kMinAmplitudeViewParam = 1,
+    kMaxAmplitudeViewParam = 2,
+    kMinTimeViewParam = 3,
+    kMaxTimeViewParam = 4,
+    kNumberOfParameters=5
 };
 
 

@@ -61,6 +61,10 @@ SpikeAudioUnit::SpikeAudioUnit(AudioUnit component)
 	CreateElements();
 	Globals()->UseIndexedParameters(kNumberOfParameters);
 	SetParameter(kThresholdParam, kDefaultValue_ThresholdParam );
+    SetParameter(kMinAmplitudeViewParam, kDefaultValue_MinAmplitudeViewParam );
+    SetParameter(kMaxAmplitudeViewParam, kDefaultValue_MaxAmplitudeViewParam );
+    SetParameter(kMinTimeViewParam, kDefaultValue_MinTimeViewParam );
+    SetParameter(kMaxTimeViewParam, kDefaultValue_MaxTimeViewParam );
     
 #if AU_DEBUG_DISPATCHER
 	mDebugDispatcher = new AUDebugDispatcher (this);
@@ -104,6 +108,39 @@ OSStatus			SpikeAudioUnit::GetParameterInfo(AudioUnitScope		inScope,
                 outParameterInfo.maxValue = 1;
                 outParameterInfo.defaultValue = kDefaultValue_ThresholdParam;
                 break;
+            
+            case kMinAmplitudeViewParam:
+                AUBase::FillInParameterName (outParameterInfo, kMinAmplitudeViewParamName, false);
+                outParameterInfo.unit = kAudioUnitParameterUnit_LinearGain;
+                outParameterInfo.minValue = -1.0;
+                outParameterInfo.maxValue = 1;
+                outParameterInfo.defaultValue = kDefaultValue_MinAmplitudeViewParam;
+                break;
+                
+            case kMaxAmplitudeViewParam:
+                AUBase::FillInParameterName (outParameterInfo, kMaxAmplitudeViewParamName, false);
+                outParameterInfo.unit = kAudioUnitParameterUnit_LinearGain;
+                outParameterInfo.minValue = -1.0;
+                outParameterInfo.maxValue = 1;
+                outParameterInfo.defaultValue = kDefaultValue_MaxAmplitudeViewParam;
+                break;
+                
+            case kMinTimeViewParam:
+                AUBase::FillInParameterName (outParameterInfo, kMinTimeViewParamName, false);
+                outParameterInfo.unit = kAudioUnitParameterUnit_LinearGain;
+                outParameterInfo.minValue = -1.0;
+                outParameterInfo.maxValue = 1;
+                outParameterInfo.defaultValue = kDefaultValue_MinTimeViewParam;
+                break;
+            
+            case kMaxTimeViewParam:
+                AUBase::FillInParameterName (outParameterInfo, kMaxTimeViewParamName, false);
+                outParameterInfo.unit = kAudioUnitParameterUnit_LinearGain;
+                outParameterInfo.minValue = -1.0;
+                outParameterInfo.maxValue = 1;
+                outParameterInfo.defaultValue = kDefaultValue_MaxTimeViewParam;
+                break;
+                
             default:
                 result = kAudioUnitErr_InvalidParameter;
                 break;
