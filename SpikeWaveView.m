@@ -34,7 +34,6 @@
 - (void)pushData: (shared_ptr<GLSpikeWave>) wave{
 
     renderer->pushSpikeWave(wave);
-    [self setNeedsDisplay: YES];
 }
 
 - (void) pushJunkData {

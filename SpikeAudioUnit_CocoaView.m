@@ -44,7 +44,11 @@
 
 enum {
 	kThresholdParam =0,
-	kNumberOfParameters=1
+    kMinAmplitudeViewParam = 1,
+    kMaxAmplitudeViewParam = 2,
+    kMinTimeViewParam = 3,
+    kMaxTimeViewParam = 4,
+	kNumberOfParameters=5
 };
 
 #pragma mark ____ LISTENER CALLBACK DISPATCHER ____
@@ -105,10 +109,24 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
     
 }
 
+- (void) viewWillMoveToSuperview:(NSView *)view{
+    
+    if(view != Nil && capture_timer != Nil){
+    
+        // setup the timer
+        [self setTimer: [NSTimer scheduledTimerWithTimeInterval: (1.0/30.0)
+                                                     target: self
+                                                   selector: @selector(updateSpikes:)
+                                                   userInfo: nil
+                                                    repeats: YES]];	
+    }
+}
+
 
 - (void) removeFromSuperview
 {
 	[capture_timer invalidate];
+    capture_timer = Nil;
 	//[[NSNotificationCenter defaultCenter] removeObserver: self];
     
 	[super removeFromSuperview];
@@ -128,6 +146,7 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
                                   &triggered_spikes,
                                   &size);	
 	
+    
 	if (result == noErr){
         if(triggered_spikes.n_spikes){
             //NSLog(@"got n triggers: %d", triggered_spikes.n_spikes);
@@ -139,6 +158,7 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
         }
     }
     
+    [self setNeedsDisplay: YES];
         
 }
 
