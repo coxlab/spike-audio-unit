@@ -69,6 +69,23 @@
     renderer->setTriggerThreshold(value);
 }
 
+- (void) setTimeRangeMin:(Float32)value{
+    renderer->setTimeRangeMin(value);
+}
+
+- (void) setTimeRangeMax:(Float32)value{
+    renderer->setTimeRangeMax(value);
+}
+
+- (void) setAmplitudeRangeMin:(Float32)value{
+    renderer->setAmplitudeRangeMin(value);
+}
+
+- (void) setAmplitudeRangeMax:(Float32)value{
+    renderer->setAmplitudeRangeMax(value);
+}
+
+
 - (void)mouseDown:(NSEvent *)theEvent {
 
     NSPoint pt = [self convertPoint:[theEvent locationInWindow] fromView:nil];
@@ -169,8 +186,8 @@
     
         new_min = -new_max;
         
-        renderer->setAmplitudeRangeMax(new_max);
-        renderer->setAmplitudeRangeMin(new_min);
+        [self setAmplitudeRangeMax:new_max];
+        [self setAmplitudeRangeMin:new_min];
     } else if(adjust_mode == SP_AMPLITUDE_MIN_SELECT){
         
         if(data_y >= 0){
@@ -180,8 +197,8 @@
         GLfloat new_min = old_adjust_value * (old_adjust_value / data_y);
         GLfloat new_max = -new_min;
         
-        renderer->setAmplitudeRangeMax(new_max);
-        renderer->setAmplitudeRangeMin(new_min);
+        [self setAmplitudeRangeMax:new_max];
+        [self setAmplitudeRangeMin:new_min];
     } else if(adjust_mode == SP_TIME_MAX_SELECT){
         
         if(data_x <= 0){
@@ -190,8 +207,8 @@
         GLfloat new_max = old_adjust_value * (old_adjust_value / data_x);
         GLfloat new_min = -new_max;
         
-        renderer->setTimeRangeMax(new_max);
-        renderer->setTimeRangeMin(new_min);
+        [self setTimeRangeMax:new_max];
+        [self setTimeRangeMin:new_min];
     } else if(adjust_mode == SP_TIME_MIN_SELECT){
         
         if(data_x >= 0){
@@ -201,8 +218,8 @@
         GLfloat new_min = old_adjust_value * (old_adjust_value / data_x);
         GLfloat new_max = -new_min;
         
-        renderer->setTimeRangeMax(new_max);
-        renderer->setTimeRangeMin(new_min);
+        [self setTimeRangeMax:new_max];
+        [self setTimeRangeMin:new_min];
     }
     
 }

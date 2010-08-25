@@ -36,4 +36,8 @@ using namespace spike_visualization;
 - (void) exitAdjustMode:(int)mode;
 
 - (void) setTriggerThreshold:(Float32)value;
+- (void) setTimeRangeMin:(Float32)value;
+- (void) setTimeRangeMax:(Float32)value;
+- (void) setAmplitudeRangeMin:(Float32)value;
+- (void) setAmplitudeRangeMax:(Float32)value;
 @end

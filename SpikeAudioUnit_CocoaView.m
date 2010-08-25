@@ -179,11 +179,41 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 
 - (void) setTriggerThreshold:(Float32)value {
     NSLog(@"setting threshold...");
-    NSAssert(	AUParameterSet(mParameterListener, self, &mParameter[0], (Float32)value, 0) == noErr,
+    NSAssert(	AUParameterSet(mParameterListener, self, &mParameter[kThresholdParam], (Float32)value, 0) == noErr,
              @"[SpikeAudioUnit_CocoaView iaTriggerThresholdChanged:] AUParameterSet()");
 
     [super setTriggerThreshold:value];
 }
+
+- (void) setTimeRangeMin:(Float32)value {
+    NSAssert(	AUParameterSet(mParameterListener, self, &mParameter[kMinTimeViewParam], (Float32)value, 0) == noErr,
+             @"[SpikeAudioUnit_CocoaView iaTimeRangeMinChanged:] AUParameterSet()");
+    
+    [super setTimeRangeMin:value];
+}
+
+- (void) setTimeRangeMax:(Float32)value {
+    NSAssert(	AUParameterSet(mParameterListener, self, &mParameter[kMaxTimeViewParam], (Float32)value, 0) == noErr,
+             @"[SpikeAudioUnit_CocoaView iaTimeRangeMaxChanged:] AUParameterSet()");
+    
+    [super setTimeRangeMax:value];
+}
+
+- (void) setAmplitudeRangeMin:(Float32)value {
+    NSAssert(	AUParameterSet(mParameterListener, self, &mParameter[kMinAmplitudeViewParam], (Float32)value, 0) == noErr,
+             @"[SpikeAudioUnit_CocoaView iaAmplitudeRangeMinChanged:] AUParameterSet()");
+    
+    [super setAmplitudeRangeMin:value];
+}
+
+- (void) setAmplitudeRangeMax:(Float32)value {
+    NSAssert(	AUParameterSet(mParameterListener, self, &mParameter[kMaxAmplitudeViewParam], (Float32)value, 0) == noErr,
+             @"[SpikeAudioUnit_CocoaView iaAmplitudeRangeMaxChanged:] AUParameterSet()");
+    
+    [super setAmplitudeRangeMax:value];
+}
+
+
 
 #pragma mark ____ INTERFACE ACTIONS ____
 - (IBAction)iaParam1Changed:(id)sender {
@@ -201,28 +231,49 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 
 - (void)enterAdjustMode:(int)mode {
 
+    AudioUnitEvent event;
+    event.mEventType = kAudioUnitEvent_BeginParameterChangeGesture;
+
     NSLog(@"enter adjust");
     if(mode == SP_TRIGGER_THRESHOLD_SELECT){
-        AudioUnitEvent event;
-		event.mArgument.mParameter = mParameter[0];
-		event.mEventType = kAudioUnitEvent_BeginParameterChangeGesture;
-		
-		AUEventListenerNotify (NULL, self, &event);		// NOTE, if you have an AUEventListenerRef because you are listening to event notification, 
-        // pass that as the first argument to AUEventListenerNotify instead of NULL 
+        
+		event.mArgument.mParameter = mParameter[kThresholdParam];
+
+    } else if(mode == SP_AMPLITUDE_MIN_SELECT){
+		event.mArgument.mParameter = mParameter[kMinAmplitudeViewParam];
+    } else if(mode == SP_AMPLITUDE_MAX_SELECT){
+		event.mArgument.mParameter = mParameter[kMaxAmplitudeViewParam];
+    } else if(mode == SP_TIME_MIN_SELECT){
+		event.mArgument.mParameter = mParameter[kMinTimeViewParam];
+    } else {
+		event.mArgument.mParameter = mParameter[kMaxTimeViewParam];
     }
+    
+    AUEventListenerNotify (NULL, self, &event);
 }
 
 - (void)exitAdjustMode:(int)mode {
     
     NSLog(@"exit adjust");
+    
+    AudioUnitEvent event;
+    event.mEventType = kAudioUnitEvent_EndParameterChangeGesture;
+    
+   
     if(mode == SP_TRIGGER_THRESHOLD_SELECT){
-        AudioUnitEvent event;
-		event.mArgument.mParameter = mParameter[0];
-		event.mEventType = kAudioUnitEvent_EndParameterChangeGesture;
-		
-		AUEventListenerNotify (NULL, self, &event);		// NOTE, if you have an AUEventListenerRef because you are listening to event notification, 
-        // pass that as the first argument to AUEventListenerNotify instead of NULL 
-    }
+		event.mArgument.mParameter = mParameter[kThresholdParam];
+    } else if(mode == SP_AMPLITUDE_MIN_SELECT){
+		event.mArgument.mParameter = mParameter[kMinAmplitudeViewParam];
+    } else if(mode == SP_AMPLITUDE_MAX_SELECT){
+		event.mArgument.mParameter = mParameter[kMaxAmplitudeViewParam];
+    } else if(mode == SP_TIME_MIN_SELECT){
+		event.mArgument.mParameter = mParameter[kMinTimeViewParam];
+    } else {
+		event.mArgument.mParameter = mParameter[kMaxTimeViewParam];
+    }		
+	
+    AUEventListenerNotify (NULL, self, &event);		// NOTE, if you have an AUEventListenerRef because you are listening to event notification, 
+    
 }
 
 

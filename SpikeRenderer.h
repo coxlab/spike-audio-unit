@@ -245,7 +245,7 @@ namespace spike_visualization {
             
                 spike_list.push_back(spike_wave);
                 
-                if(spike_list.size() > max_spikes_to_show){
+                if(spike_list.size() > (unsigned int)max_spikes_to_show){
                     spike_list.pop_front();
                 }
                 
