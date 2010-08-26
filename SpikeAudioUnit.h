@@ -47,6 +47,7 @@
 #include "CABufferList.h"
 #include <boost/shared_ptr.hpp>
 #include "SharedTypes.h"
+#include "MIDIEndpoint.h"
 
 using namespace boost;
 
@@ -133,6 +134,8 @@ public:
         public:
             SpikeAudioUnitKernel(AUEffectBase *inAudioUnit ): AUKernelBase(inAudioUnit){ 
                 
+                midi_endpoint = shared_ptr<MIDIEndpoint>(new MIDIEndpoint("midi_spikes", "default_port", "spike_source"));
+                
                 capture_buffer.Allocate(1, sizeof(Float32), DEFAULT_BUFFER_SIZE);//2048);
                 
                 CAStreamBasicDescription	bufClientDesc;		
@@ -207,6 +210,8 @@ public:
             CABufferList *capture_buffer_list;
             
             AUSpikeContainer getFreshSpikeContainer();  
+            
+            shared_ptr<MIDIEndpoint> midi_endpoint; 
                
 	};
 };

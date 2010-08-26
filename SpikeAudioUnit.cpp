@@ -45,7 +45,7 @@ TESTING
 #include "SpikeAudioUnit.h"
 #include <iostream>
 
-
+#define EMIT_MIDI
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -340,7 +340,7 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
             
             AudioBufferList *buffer_list = &capture_buffer_list->GetModifiableBufferList();
             // TRIGGER THAT SHIT
-                                //AudioBufferList *abl, UInt32 nFrames, SampleTime frameNumber, bool aheadOK
+                        
             capture_buffer.Fetch(buffer_list,   PRE_TRIGGER + POST_TRIGGER , frame_number - (PRE_TRIGGER + POST_TRIGGER), false); 
             
             AUSpikeContainer container = getFreshSpikeContainer();
@@ -358,6 +358,10 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
                 refractory_count--;
             } else if(last_sample > threshold && inputSample < threshold){
                 pending_trigger += POST_TRIGGER ; // send out this waveform when it is fully captured
+                
+                #ifdef EMIT_MIDI
+                    midi_enpoint->sendMessage(0x90, 0x00, 0x7F);
+                #endif
             } 
         }
         
