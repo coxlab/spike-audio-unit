@@ -10,6 +10,8 @@
 		3E0BECFB0898391C00E1F0F7 /* CAVectorUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3E0BECF80898391C00E1F0F7 /* CAVectorUnit.cpp */; };
 		3E0BECFC0898391C00E1F0F7 /* CAVectorUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E0BECF90898391C00E1F0F7 /* CAVectorUnit.h */; };
 		3E0BECFD0898391C00E1F0F7 /* CAVectorUnitTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E0BECFA0898391C00E1F0F7 /* CAVectorUnitTypes.h */; };
+		5C4A92C112283CD90021D741 /* LocklessQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4A92BF12283CD90021D741 /* LocklessQueue.h */; };
+		5C4A92C212283CD90021D741 /* LocklessQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C4A92C012283CD90021D741 /* LocklessQueue.cpp */; };
 		5CC630ED11C81272000AB17E /* MIDIEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC630EB11C81272000AB17E /* MIDIEndpoint.h */; };
 		5CC630EE11C81272000AB17E /* MIDIEndpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC630EC11C81272000AB17E /* MIDIEndpoint.cpp */; };
 		5CC630F211C817D4000AB17E /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CC630F111C817D4000AB17E /* CoreMIDI.framework */; };
@@ -112,6 +114,8 @@
 		3E0BECF80898391C00E1F0F7 /* CAVectorUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CAVectorUnit.cpp; sourceTree = "<group>"; };
 		3E0BECF90898391C00E1F0F7 /* CAVectorUnit.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CAVectorUnit.h; sourceTree = "<group>"; };
 		3E0BECFA0898391C00E1F0F7 /* CAVectorUnitTypes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CAVectorUnitTypes.h; sourceTree = "<group>"; };
+		5C4A92BF12283CD90021D741 /* LocklessQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocklessQueue.h; sourceTree = "<group>"; };
+		5C4A92C012283CD90021D741 /* LocklessQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocklessQueue.cpp; sourceTree = "<group>"; };
 		5CC630EB11C81272000AB17E /* MIDIEndpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIEndpoint.h; sourceTree = "<group>"; };
 		5CC630EC11C81272000AB17E /* MIDIEndpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MIDIEndpoint.cpp; sourceTree = "<group>"; };
 		5CC630F111C817D4000AB17E /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
@@ -253,6 +257,7 @@
 		08FB77ADFE841716C02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				5C4A92BE12283CC10021D741 /* ExternalUtility */,
 				5CC6337911C9AE5D000AB17E /* SpikeUI */,
 				5CC6333F11C9A6CD000AB17E /* Shared */,
 				8BA05A56072072A900365D66 /* AU Source */,
@@ -270,6 +275,15 @@
 				8BA4AE4E073EB69000A2709A /* SpikeAudioUnit_CocoaViewFactory.bundle */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		5C4A92BE12283CC10021D741 /* ExternalUtility */ = {
+			isa = PBXGroup;
+			children = (
+				5C4A92BF12283CD90021D741 /* LocklessQueue.h */,
+				5C4A92C012283CD90021D741 /* LocklessQueue.cpp */,
+			);
+			name = ExternalUtility;
 			sourceTree = "<group>";
 		};
 		5CC6333F11C9A6CD000AB17E /* Shared */ = {
@@ -453,6 +467,7 @@
 				5CC631E411C91235000AB17E /* CAThreadSafeList.h in Headers */,
 				5CC6325011C92985000AB17E /* CABufferList.h in Headers */,
 				5CC6334111C9A6E7000AB17E /* SharedTypes.h in Headers */,
+				5C4A92C112283CD90021D741 /* LocklessQueue.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -603,6 +618,7 @@
 				5CC630EE11C81272000AB17E /* MIDIEndpoint.cpp in Sources */,
 				5CC631E211C91235000AB17E /* CARingBuffer.cpp in Sources */,
 				5CC6325611C929EF000AB17E /* CABufferList.cpp in Sources */,
+				5C4A92C212283CD90021D741 /* LocklessQueue.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -654,6 +670,10 @@
 				EXPORTED_SYMBOLS_FILE = SpikeAudioUnit.exp;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GENERATE_PKGINFO_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/boost.local",
+					/usr/local/include,
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Audio/Plug-Ins/Components/";
 				LIBRARY_STYLE = Bundle;

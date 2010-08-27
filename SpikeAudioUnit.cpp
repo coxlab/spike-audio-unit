@@ -360,7 +360,7 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
                 pending_trigger += POST_TRIGGER ; // send out this waveform when it is fully captured
                 
                 #ifdef EMIT_MIDI
-                    midi_enpoint->sendMessage(0x90, 0x00, 0x7F);
+                    midi_endpoint->sendMessage(0x90, 0x00, 0x7F);
                 #endif
             } 
         }
