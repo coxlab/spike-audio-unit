@@ -152,11 +152,16 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 	if (result == noErr){
         if(triggered_spikes.n_spikes){
             //NSLog(@"got n triggers: %d", triggered_spikes.n_spikes);
-            AUSpikeContainer *spike_waveform = triggered_spikes.spike_containers[0];
-            float *buffer = spike_waveform->buffer;
-            //NSLog(@"%f %f %f %f %f %f", buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
-            shared_ptr<GLSpikeWave> wave(new GLSpikeWave(PRE_TRIGGER+POST_TRIGGER, -PRE_TRIGGER/44100., 1.0/44100., buffer));
-            [self pushData:wave];
+            std::vector<AUSpikeContainer> spike_vector = triggered_spikes.spike_vector;
+
+            std::vector<AUSpikeContainer>::iterator i;
+            for(i = spike_vector.begin(); i != spike_vector.end(); i++){
+                float *buffer = (*i).buffer;
+                if(buffer != NULL){
+                    shared_ptr<GLSpikeWave> wave(new GLSpikeWave(PRE_TRIGGER+POST_TRIGGER, -PRE_TRIGGER/44100., 1.0/44100., buffer));
+                    [self pushData:wave];
+                }
+            }
         }
     }
     

@@ -48,6 +48,7 @@
 #include <boost/shared_ptr.hpp>
 #include "SharedTypes.h"
 #include "MIDIEndpoint.h"
+#include "LocklessQueue.h"
 
 using namespace boost;
 
@@ -89,7 +90,7 @@ enum {
 
 
 
-typedef TThreadSafeList<AUSpikeContainer> SpikeContainerList;
+typedef LocklessQueue<AUSpikeContainer> SpikeContainerQueue;
 
 #pragma mark ____SpikeAudioUnit
 class SpikeAudioUnit : public AUEffectBase
@@ -162,10 +163,7 @@ public:
                 capture_buffer_list = CABufferList::New("capture buffer", bufClientDesc );
                 capture_buffer_list->AllocateBuffers(DEFAULT_BUFFER_SIZE * sizeof(Float32));//10 * (PRE_TRIGGER + POST_TRIGGER) * sizeof(Float32));
             
-                for(int i = 0; i < 1000; i++){
-                    AUSpikeContainer reserve_container;
-                    spike_recycle_queue.deferred_add(reserve_container);
-                }
+                
             }
 		
             // *Required* overides for the process method for this effect
@@ -198,8 +196,7 @@ public:
             int refractory_count;
             
             
-            SpikeContainerList spike_display_queue;  // a thread-safe place to drop triggered waveforms
-            SpikeContainerList spike_recycle_queue;    // a place to recycle used buffers
+            SpikeContainerQueue spike_display_queue;  // a thread-safe place to drop triggered waveforms
             
             CARingBuffer capture_buffer;
             

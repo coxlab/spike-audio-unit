@@ -226,7 +226,7 @@ OSStatus			SpikeAudioUnit::GetProperty(	AudioUnitPropertyID inID,
                     ((SpikeAudioUnitKernel *)mKernelList[0])->getTriggeredSpikes(overview);
                 } else {
                     overview->n_spikes = 0;
-                    overview->spike_containers = NULL;
+                    overview->spike_vector = std::vector<AUSpikeContainer>();
                 }
                 
                 return noErr;
@@ -241,27 +241,15 @@ OSStatus			SpikeAudioUnit::GetProperty(	AudioUnitPropertyID inID,
 
 void SpikeAudioUnit::SpikeAudioUnitKernel::getTriggeredSpikes(TriggeredSpikes *spikes){
 
-    // run through once quickly to see how many there are
-    int n_spikes = 0;
-    SpikeContainerList::iterator i = spike_display_queue.begin();
-    while(i != spike_display_queue.end()){
-        i++;
-        n_spikes++;
-    }
     
-    spikes->spike_containers = (AUSpikeContainer **)calloc(n_spikes, sizeof(AUSpikeContainer *));
-    
-    i = spike_display_queue.begin();
+    spikes->spike_vector = vector<AUSpikeContainer>();
+
+    AUSpikeContainer spike_container;
     int s = 0;
-    while(s < n_spikes && i != spike_display_queue.end()){
-        
-        spikes->spike_containers[s] = (*i).deep_copy();
-        spike_display_queue.deferred_remove(*i);
-        spike_recycle_queue.deferred_add(*i);
-        i++;
+    while(spike_display_queue.consume(spike_container)){
+        spikes->spike_vector.push_back(spike_container);
         s++;
     }
-    
     
     spikes->n_spikes = s;
 
@@ -308,8 +296,6 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
 //    capture_buffer.Store(&temp_buffer_list, 1, frame_number);
     
     
-    spike_display_queue.update();
-    spike_recycle_queue.update();
     
 	while (nSampleFrames-- > 0) {
         
@@ -346,8 +332,7 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
             AUSpikeContainer container = getFreshSpikeContainer();
             memcpy(container.buffer, buffer_list->mBuffers[0].mData, (PRE_TRIGGER + POST_TRIGGER) * sizeof(Float32));
             
-            spike_display_queue.deferred_add(container);
-            spike_display_queue.update();
+            spike_display_queue.produce(container);
             
             pending_trigger = -1; // rearm
             refractory_count = 5;
@@ -375,35 +360,8 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
 
 AUSpikeContainer SpikeAudioUnit::SpikeAudioUnitKernel::getFreshSpikeContainer(){
   
-
-  
-  SpikeContainerList::iterator i = spike_recycle_queue.begin();
-  if(i != spike_recycle_queue.end()){
-      AUSpikeContainer recycled_container = *i;
-      spike_recycle_queue.deferred_remove(*i);
-      spike_recycle_queue.update();
-      return recycled_container;
-  } else {
-      // grab it from the display queue
-      SpikeContainerList::iterator j = spike_display_queue.begin();
-      if(j == spike_display_queue.end()){
-          // Deep shit here
-          std::cerr << "deep shit" << std::endl;
-          AUSpikeContainer brand_new;
-          return brand_new;
-      }
-      
-      SpikeContainerList::iterator j_last = j;
-      while(j != spike_display_queue.end()){
-          j_last = j;
-          j++;
-      }
-      
-      AUSpikeContainer recycled_from_display = *j_last;
-      spike_display_queue.deferred_remove(*j_last);
-      spike_display_queue.update();
-      
-      return recycled_from_display;
-  }
+    AUSpikeContainer fresh_container;
+    return fresh_container;
+    
 }
                               

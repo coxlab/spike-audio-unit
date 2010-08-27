@@ -7,7 +7,7 @@
  *
  */
 
-
+#include <vector>
 
 
 #define PRE_TRIGGER     33
@@ -60,7 +60,7 @@ public:
 struct TriggeredSpikes {
     
     int n_spikes;
-    AUSpikeContainer **spike_containers;
+    std::vector<AUSpikeContainer> spike_vector;
     
 };
 typedef struct TriggeredSpikes TriggeredSpikes;
