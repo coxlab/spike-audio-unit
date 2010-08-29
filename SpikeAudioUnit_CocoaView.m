@@ -103,7 +103,7 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 	[self _synchronizeUIWithParameterValues];
     
     // setup the timer
-    [self setTimer: [NSTimer scheduledTimerWithTimeInterval: (1.0/30.0)
+    [self setTimer: [NSTimer scheduledTimerWithTimeInterval: (1.0/20.0)
                                                      target: self
                                                    selector: @selector(updateSpikes:)
                                                    userInfo: nil
@@ -116,7 +116,7 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
     if(view != Nil && capture_timer != Nil){
     
         // setup the timer
-        [self setTimer: [NSTimer scheduledTimerWithTimeInterval: (1.0/30.0)
+        [self setTimer: [NSTimer scheduledTimerWithTimeInterval: (1.0/20.0)
                                                      target: self
                                                    selector: @selector(updateSpikes:)
                                                    userInfo: nil
@@ -148,17 +148,30 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
                                   &triggered_spikes,
                                   &size);	
 	
+    // At this stage, we own every part of triggered_spikes
+    // Ugh, old-school memory management
     
 	if (result == noErr){
         if(triggered_spikes.n_spikes){
             //NSLog(@"got n triggers: %d", triggered_spikes.n_spikes);
-            AUSpikeContainer *spike_waveform = triggered_spikes.spike_containers[0];
-            float *buffer = spike_waveform->buffer;
-            //NSLog(@"%f %f %f %f %f %f", buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
-            shared_ptr<GLSpikeWave> wave(new GLSpikeWave(PRE_TRIGGER+POST_TRIGGER, -PRE_TRIGGER/44100., 1.0/44100., buffer));
-            [self pushData:wave];
+            
+            int start_index = max(0, triggered_spikes.n_spikes - [self maxSpikesToShow]);
+            
+            for(int i = start_index ; i < triggered_spikes.n_spikes; i++){
+                AUSpikeContainer *spike_waveform = triggered_spikes.spike_containers[i];
+                float *buffer = spike_waveform->buffer;
+                //NSLog(@"%f %f %f %f %f %f", buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
+                if(buffer != NULL){
+                    shared_ptr<GLSpikeWave> wave(new GLSpikeWave(PRE_TRIGGER+POST_TRIGGER, -PRE_TRIGGER/44100., 1.0/44100., buffer));
+                    
+                    [self pushData:wave];
+                    spike_waveform->dispose();
+                }
+            }
         }
     }
+    
+    delete [] triggered_spikes.spike_containers;
     
     [self setNeedsDisplay: YES];
         

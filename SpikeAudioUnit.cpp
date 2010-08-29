@@ -45,7 +45,7 @@ TESTING
 #include "SpikeAudioUnit.h"
 #include <iostream>
 
-#define EMIT_MIDI
+//#define EMIT_MIDI
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -249,15 +249,23 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::getTriggeredSpikes(TriggeredSpikes *s
         n_spikes++;
     }
     
-    spikes->spike_containers = (AUSpikeContainer **)calloc(n_spikes, sizeof(AUSpikeContainer *));
+    if(n_spikes == 0){
+        fprintf(stderr, "no spikes to display");
+    }
+    
+    spikes->spike_containers = new AUSpikeContainer*[n_spikes];
     
     i = spike_display_queue.begin();
     int s = 0;
     while(s < n_spikes && i != spike_display_queue.end()){
         
-        spikes->spike_containers[s] = (*i).deep_copy();
+        // shallow copy the data
+        // the buffer now "belongs" to the caller
+        spikes->spike_containers[s] = (*i);
+        
+        // at some point in the future, this will be removed
         spike_display_queue.deferred_remove(*i);
-        spike_recycle_queue.deferred_add(*i);
+
         i++;
         s++;
     }
@@ -308,8 +316,12 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
 //    capture_buffer.Store(&temp_buffer_list, 1, frame_number);
     
     
-    spike_display_queue.update();
-    spike_recycle_queue.update();
+    //spike_display_queue.update();
+    //spike_recycle_queue.update();
+    
+    int fresh_spikes = 0;
+    static int frames_since_last_update = 0;
+#define MIN_FRAMES_BETWEEN_UPDATES  4000
     
 	while (nSampleFrames-- > 0) {
         
@@ -339,15 +351,17 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
             //}
             
             AudioBufferList *buffer_list = &capture_buffer_list->GetModifiableBufferList();
-            // TRIGGER THAT SHIT
-                        
+            
+            // TRIGGER 
             capture_buffer.Fetch(buffer_list,   PRE_TRIGGER + POST_TRIGGER , frame_number - (PRE_TRIGGER + POST_TRIGGER), false); 
             
-            AUSpikeContainer container = getFreshSpikeContainer();
-            memcpy(container.buffer, buffer_list->mBuffers[0].mData, (PRE_TRIGGER + POST_TRIGGER) * sizeof(Float32));
+            AUSpikeContainer *container = getFreshSpikeContainer();
+            memcpy(container->buffer, buffer_list->mBuffers[0].mData, (PRE_TRIGGER + POST_TRIGGER) * sizeof(Float32));
             
+            // schedule this container to be added on the next update
             spike_display_queue.deferred_add(container);
-            spike_display_queue.update();
+            fresh_spikes++;
+            
             
             pending_trigger = -1; // rearm
             refractory_count = 5;
@@ -360,50 +374,76 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
                 pending_trigger += POST_TRIGGER ; // send out this waveform when it is fully captured
                 
                 #ifdef EMIT_MIDI
-                    midi_enpoint->sendMessage(0x90, 0x00, 0x7F);
+                    midi_endpoint->sendMessage(0x90, 0x00, 0x7F);
+                    midi_endpoint->sendMessage(0x8F, 0x00, 0x7F);
                 #endif
             } 
         }
         
+        
         frame_number++;
+        frames_since_last_update++;
         last_sample = inputSample;
     }
     
+    // update the display queue so that the ui can get what it needs
+    // THIS CAN ONLY BE CALLED FROM ONE THREAD!!
+    if(fresh_spikes && frames_since_last_update > MIN_FRAMES_BETWEEN_UPDATES){
+        spike_display_queue.update();
+        frames_since_last_update = 0;
+    }
     
 }
 
 
-AUSpikeContainer SpikeAudioUnit::SpikeAudioUnitKernel::getFreshSpikeContainer(){
+AUSpikeContainer *SpikeAudioUnit::SpikeAudioUnitKernel::getFreshSpikeContainer(){
   
 
-  
-  SpikeContainerList::iterator i = spike_recycle_queue.begin();
-  if(i != spike_recycle_queue.end()){
-      AUSpikeContainer recycled_container = *i;
-      spike_recycle_queue.deferred_remove(*i);
-      spike_recycle_queue.update();
-      return recycled_container;
-  } else {
-      // grab it from the display queue
-      SpikeContainerList::iterator j = spike_display_queue.begin();
-      if(j == spike_display_queue.end()){
-          // Deep shit here
-          std::cerr << "deep shit" << std::endl;
-          AUSpikeContainer brand_new;
-          return brand_new;
-      }
-      
-      SpikeContainerList::iterator j_last = j;
-      while(j != spike_display_queue.end()){
-          j_last = j;
-          j++;
-      }
-      
-      AUSpikeContainer recycled_from_display = *j_last;
-      spike_display_queue.deferred_remove(*j_last);
-      spike_display_queue.update();
-      
-      return recycled_from_display;
-  }
+//#ifdef DONT_RECYCLE_SPIKES
+//  SpikeContainerList::iterator i = spike_recycle_queue.begin();  
+//  if(i != spike_recycle_queue.end()){
+//    AUSpikeContainer recycled_container = *i;
+//    spike_recycle_queue.deferred_remove(*i);
+//    spike_recycle_queue.update();
+//    (*i).dispose();
+//  }
+    
+  AUSpikeContainer *brand_new_spike = new AUSpikeContainer();
+  return brand_new_spike;
+//#else
+//  
+//  // update the recycle queue so any changes from
+//  // the UI thread are reflected
+//  spike_recycle_queue.update();
+//    
+//  SpikeContainerList::iterator i = spike_recycle_queue.begin();
+//  if(i != spike_recycle_queue.end()){
+//      AUSpikeContainer recycled_container = *i;
+//      spike_recycle_queue.deferred_remove(*i);
+//      //spike_recycle_queue.update();
+//      return recycled_container;
+//  } else {
+//      // grab it from the display queue
+//      SpikeContainerList::iterator j = spike_display_queue.begin();
+//      if(j == spike_display_queue.end()){
+//          // Deep shit here
+//          std::cerr << "deep shit" << std::endl;
+//          AUSpikeContainer brand_new;
+//          return brand_new;
+//      }
+//      
+//      SpikeContainerList::iterator j_last = j;
+//      while(j != spike_display_queue.end()){
+//          j_last = j;
+//          j++;
+//      }
+//      
+//      AUSpikeContainer recycled_from_display = *j_last;
+//      spike_display_queue.deferred_remove(*j_last);
+//      spike_display_queue.update();
+//      
+//      return recycled_from_display;
+//  }
+//#endif
 }
                               

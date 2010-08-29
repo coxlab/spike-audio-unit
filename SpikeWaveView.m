@@ -31,6 +31,10 @@
                                  
 }
 
+- (int) maxSpikesToShow {
+    return renderer->getMaxSpikesToShow();
+}
+
 - (void)pushData: (shared_ptr<GLSpikeWave>) wave{
 
     renderer->pushSpikeWave(wave);

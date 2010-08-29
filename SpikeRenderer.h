@@ -224,6 +224,7 @@ namespace spike_visualization {
             void setTimeRangeMax(GLfloat new_max){ time_range_max_seconds = new_max; }
             void setTimeRangeMin(GLfloat new_min){ time_range_min_seconds = new_min; }
             
+        int getMaxSpikesToShow(){ return max_spikes_to_show; }
         
             bool hitTest(GLfloat view_x, GLfloat view_y, SpikeWaveSelectionAction *action){
                 
@@ -450,7 +451,7 @@ namespace spike_visualization {
                     int length = wave->getLength();
                     //std::cerr << "Start time: " << time_offset << " Interval: " << data_interval << std::endl;
                     
-                    glColor4f(1.0, 0.0, 0.0, alpha);
+                    glColor4f(1.0, 0.0, 0.0, 1.0 - alpha);
                     glBegin(GL_LINE_STRIP);
                     for(int j = 0; j < length; j++){
                         

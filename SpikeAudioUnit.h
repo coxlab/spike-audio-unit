@@ -52,6 +52,7 @@
 using namespace boost;
 
 #define DEFAULT_BUFFER_SIZE     44100
+#define DONT_RECYCLE_SPIKES
 
 
 #if AU_DEBUG_DISPATCHER
@@ -89,7 +90,7 @@ enum {
 
 
 
-typedef TThreadSafeList<AUSpikeContainer> SpikeContainerList;
+typedef TThreadSafeList<AUSpikeContainer *> SpikeContainerList;
 
 #pragma mark ____SpikeAudioUnit
 class SpikeAudioUnit : public AUEffectBase
@@ -162,10 +163,10 @@ public:
                 capture_buffer_list = CABufferList::New("capture buffer", bufClientDesc );
                 capture_buffer_list->AllocateBuffers(DEFAULT_BUFFER_SIZE * sizeof(Float32));//10 * (PRE_TRIGGER + POST_TRIGGER) * sizeof(Float32));
             
-                for(int i = 0; i < 1000; i++){
-                    AUSpikeContainer reserve_container;
-                    spike_recycle_queue.deferred_add(reserve_container);
-                }
+                //for(int i = 0; i < 1000; i++){
+                    //AUSpikeContainer reserve_container;
+                    //spike_recycle_queue.deferred_add(reserve_container);
+                //}
             }
 		
             // *Required* overides for the process method for this effect
@@ -199,7 +200,7 @@ public:
             
             
             SpikeContainerList spike_display_queue;  // a thread-safe place to drop triggered waveforms
-            SpikeContainerList spike_recycle_queue;    // a place to recycle used buffers
+            //SpikeContainerList spike_recycle_queue;    // a place to recycle used buffers
             
             CARingBuffer capture_buffer;
             
@@ -209,7 +210,7 @@ public:
             CABufferList *input_buffer_list;
             CABufferList *capture_buffer_list;
             
-            AUSpikeContainer getFreshSpikeContainer();  
+            AUSpikeContainer *getFreshSpikeContainer();  
             
             shared_ptr<MIDIEndpoint> midi_endpoint; 
                

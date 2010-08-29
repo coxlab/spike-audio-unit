@@ -6,6 +6,21 @@
 	objectVersion = 45;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		685E48BF1226ED65004D34CA /* All */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 685E48D01226ED85004D34CA /* Build configuration list for PBXAggregateTarget "All" */;
+			buildPhases = (
+			);
+			dependencies = (
+				685E48C51226ED69004D34CA /* PBXTargetDependency */,
+				685E48C31226ED67004D34CA /* PBXTargetDependency */,
+			);
+			name = All;
+			productName = All;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		3E0BECFB0898391C00E1F0F7 /* CAVectorUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3E0BECF80898391C00E1F0F7 /* CAVectorUnit.cpp */; };
 		3E0BECFC0898391C00E1F0F7 /* CAVectorUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E0BECF90898391C00E1F0F7 /* CAVectorUnit.h */; };
@@ -85,6 +100,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		685E48C21226ED67004D34CA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D01CCC60486CAD60068D4B7 /* SpikeAudioUnit */;
+			remoteInfo = SpikeAudioUnit;
+		};
+		685E48C41226ED69004D34CA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8BA4AE4D073EB69000A2709A /* CocoaUI */;
+			remoteInfo = CocoaUI;
+		};
 		F7609A450C556A700040AAA6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
@@ -514,6 +543,7 @@
 			targets = (
 				8D01CCC60486CAD60068D4B7 /* SpikeAudioUnit */,
 				8BA4AE4D073EB69000A2709A /* CocoaUI */,
+				685E48BF1226ED65004D34CA /* All */,
 			);
 		};
 /* End PBXProject section */
@@ -609,6 +639,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		685E48C31226ED67004D34CA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8D01CCC60486CAD60068D4B7 /* SpikeAudioUnit */;
+			targetProxy = 685E48C21226ED67004D34CA /* PBXContainerItemProxy */;
+		};
+		685E48C51226ED69004D34CA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8BA4AE4D073EB69000A2709A /* CocoaUI */;
+			targetProxy = 685E48C41226ED69004D34CA /* PBXContainerItemProxy */;
+		};
 		F7609A460C556A700040AAA6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8BA4AE4D073EB69000A2709A /* CocoaUI */;
@@ -711,6 +751,27 @@
 			};
 			name = Release;
 		};
+		685E48C01226ED65004D34CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = All;
+			};
+			name = Debug;
+		};
+		685E48C11226ED65004D34CA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = All;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -737,6 +798,15 @@
 			buildConfigurations = (
 				3E0BED070898391C00E1F0F7 /* Debug */,
 				3E0BED080898391C00E1F0F7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		685E48D01226ED85004D34CA /* Build configuration list for PBXAggregateTarget "All" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				685E48C01226ED65004D34CA /* Debug */,
+				685E48C11226ED65004D34CA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

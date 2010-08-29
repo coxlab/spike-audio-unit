@@ -28,8 +28,12 @@ public:
     
     // constructor for building a fresh waveform buffer
     AUSpikeContainer(){
-        buffer = (Float32 *)calloc(PRE_TRIGGER + POST_TRIGGER, sizeof(Float32));
+        buffer = new Float32[PRE_TRIGGER + POST_TRIGGER];
     }
+    
+//    ~AUSpikeContainer(){
+//        dispose();
+//    }
     
     // constructor for recycling an existing buffer
     AUSpikeContainer(Float32* _buffer){
@@ -39,7 +43,10 @@ public:
     // only call when the program is finished; otherwise, we'll
     // recycle the buffer
     void dispose(){
-        delete buffer;
+        if(buffer != NULL){
+            delete [] buffer;
+            buffer = NULL;
+        }
     }
     
     bool operator==(const AUSpikeContainer& container){
@@ -51,6 +58,12 @@ public:
         AUSpikeContainer *return_val = new AUSpikeContainer();
         memcpy(return_val->buffer, buffer, (PRE_TRIGGER + POST_TRIGGER)*sizeof(Float32));
         
+        return return_val;
+    }
+    
+    AUSpikeContainer *shallow_copy(){
+        
+        AUSpikeContainer *return_val = new AUSpikeContainer(buffer);        
         return return_val;
     }
 };

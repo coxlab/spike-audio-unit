@@ -8,7 +8,7 @@
  */
 
 #include <OpenGL/gl.h>
-
+#include <cstdlib>
 
 namespace spike_visualization {
    
@@ -39,7 +39,9 @@ namespace spike_visualization {
             start_time = _start_time;
             data_interval = _data_interval;
             data = new T[length];
-            memcpy(data, _data, length * sizeof(T));
+            if(_data != NULL){
+                memcpy(data, _data, length * sizeof(T));
+            }
         }
         
         ~SpikeWave(){
