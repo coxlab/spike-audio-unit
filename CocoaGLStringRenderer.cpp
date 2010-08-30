@@ -37,7 +37,7 @@ GLuint CocoaGLStringRenderer::stringToTexture(string str, float font_size, float
     
     [cocoa_gl_str releaseTexture]; // let me deal with it
     [cocoa_gl_str release];
-    //[att_str release];
+    [att_str release];
     
     return tex;
 }

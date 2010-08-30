@@ -356,11 +356,16 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
             // TRIGGER 
             capture_buffer.Fetch(buffer_list,   PRE_TRIGGER + POST_TRIGGER , frame_number - (PRE_TRIGGER + POST_TRIGGER), false); 
 
-
+            
+            
             // copy the spike wave into a protocol buffer object
             SpikeWaveBuffer wave;
             wave.set_channel_id(51);
             wave.set_time_stamp(frame_number);
+            
+            if(buffer_list->mBuffers[0].mData == NULL){
+                std::cerr << "Bad CA Buffer" << std::endl;
+            }
             
             Float32 *float_buffer = (Float32 *)(buffer_list->mBuffers[0].mData);
             for(int i = 0; i < (PRE_TRIGGER + POST_TRIGGER); i++){
@@ -376,11 +381,12 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
             memcpy(msg.data(), serialized.c_str(), serialized.length());
             bool rc = message_socket.send(msg);
             
+        
+            
             if(!rc){
                 std::cerr << "ZMQ: " << zmq_strerror(zmq_errno()) << std::endl;
-            } else {
-                std::cerr << "SENT: " << serialized.length() << " bytes" << std::endl;
-            }
+            }             
+            
             
             fresh_spikes++;
             

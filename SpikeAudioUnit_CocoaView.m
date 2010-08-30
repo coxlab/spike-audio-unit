@@ -107,7 +107,7 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 	[self _synchronizeUIWithParameterValues];
     
     int rc;
-    message_context = zmq_init(1,1,0);
+    message_context = zmq_init(1);
     message_socket = zmq_socket(message_context, ZMQ_SUB);
     zmq_setsockopt(message_socket, ZMQ_SUBSCRIBE, "", 0);
     //rc = zmq_connect(message_socket, "tcp://127.0.0.1:5555");
@@ -170,9 +170,9 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 //    }
     
     while(rc == 0){
-        std::cerr << "RECV" << std::endl;
+        //std::cerr << "RECV" << std::endl;
 
-        string data((const char *)zmq_msg_data(&msg));
+        string data((const char *)zmq_msg_data(&msg), zmq_msg_size(&msg));
         SpikeWaveBuffer wave;
         wave.ParseFromString(data);
         
@@ -191,6 +191,9 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
         shared_ptr<GLSpikeWave> gl_wave(new GLSpikeWave(PRE_TRIGGER+POST_TRIGGER, -PRE_TRIGGER/44100., 1.0/44100., data_buffer));
         
         [self pushData:gl_wave];
+        zmq_msg_close(&msg);
+        rc = zmq_msg_init (&msg);
+        assert (rc == 0);
         
         rc = zmq_recv (message_socket, &msg, ZMQ_NOBLOCK);
     }

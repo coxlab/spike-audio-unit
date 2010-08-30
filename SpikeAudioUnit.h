@@ -137,7 +137,7 @@ public:
 	{  
         public:
             SpikeAudioUnitKernel(AUEffectBase *inAudioUnit ): AUKernelBase(inAudioUnit),
-                                                              message_ctx(1,1),
+                                                              message_ctx(1),
                                                               message_socket(message_ctx, ZMQ_PUB){ 
                 
                 midi_endpoint = shared_ptr<MIDIEndpoint>(new MIDIEndpoint("midi_spikes", "default_port", "spike_source"));
