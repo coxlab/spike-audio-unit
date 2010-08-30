@@ -526,6 +526,7 @@
 				8BA4AE4A073EB69000A2709A /* Resources */,
 				8BA4AE4B073EB69000A2709A /* Sources */,
 				8BA4AE4C073EB69000A2709A /* Frameworks */,
+				687C66CF122C306F007D82E2 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -637,6 +638,19 @@
 			shellPath = /bin/bash;
 			shellScript = "# shell script goes here\necho ${SRCROOT}\nrm -f ${SRCROOT}/spike_wave.pb.*\ncd ${SRCROOT}\n/usr/bin/env protoc --proto_path=./ --cpp_out=./ spike_wave.proto\nexit 0";
 		};
+		687C66CF122C306F007D82E2 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp -r $BUILT_PRODUCTS_DIR/SpikeAudioUnit_CocoaViewFactory.bundle /Library/Audio/Plug-ins/Components/";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -739,8 +753,15 @@
 		3E0BED000898391C00E1F0F7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				INFOPLIST_FILE = SpikeAudioUnit_CocoaViewFactory.plist;
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
+				OTHER_LDFLAGS = (
+					"-lzmq",
+					/usr/local/lib/libprotobuf.a,
+				);
 				PRODUCT_NAME = SpikeAudioUnit_CocoaViewFactory;
 			};
 			name = Release;
@@ -769,12 +790,18 @@
 		3E0BED040898391C00E1F0F7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				EXPORTED_SYMBOLS_FILE = SpikeAudioUnit.exp;
 				GENERATE_PKGINFO_FILE = YES;
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Audio/Plug-Ins/Components/";
 				LIBRARY_STYLE = Bundle;
-				OTHER_LDFLAGS = "-bundle";
+				OTHER_LDFLAGS = (
+					"-lzmq",
+					"-bundle",
+					/usr/local/lib/libprotobuf.a,
+				);
 				OTHER_REZFLAGS = "-d ppc_$ppc -d i386_$i386 -d ppc64_$ppc64 -d x86_64_$x86_64 -I /System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Versions/A/Headers -I \"$(DEVELOPER_DIR)/Extras/CoreAudio/AudioUnits/AUPublic/AUBase\"";
 				PRODUCT_NAME = SpikeAudioUnit;
 				WRAPPER_EXTENSION = component;

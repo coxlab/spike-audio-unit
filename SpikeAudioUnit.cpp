@@ -66,6 +66,7 @@ SpikeAudioUnit::SpikeAudioUnit(AudioUnit component)
     SetParameter(kMaxAmplitudeViewParam, kDefaultValue_MaxAmplitudeViewParam );
     SetParameter(kMinTimeViewParam, kDefaultValue_MinTimeViewParam );
     SetParameter(kMaxTimeViewParam, kDefaultValue_MaxTimeViewParam );
+    SetParameter(kChannelIDParam, SpikeAudioUnit::channel_count++);
     
 #if AU_DEBUG_DISPATCHER
 	mDebugDispatcher = new AUDebugDispatcher (this);
@@ -134,6 +135,8 @@ OSStatus			SpikeAudioUnit::GetParameterInfo(AudioUnitScope		inScope,
                 outParameterInfo.defaultValue = kDefaultValue_MinTimeViewParam;
                 break;
             
+            
+                
             case kMaxTimeViewParam:
                 AUBase::FillInParameterName (outParameterInfo, kMaxTimeViewParamName, false);
                 outParameterInfo.unit = kAudioUnitParameterUnit_LinearGain;
@@ -141,7 +144,15 @@ OSStatus			SpikeAudioUnit::GetParameterInfo(AudioUnitScope		inScope,
                 outParameterInfo.maxValue = 1;
                 outParameterInfo.defaultValue = kDefaultValue_MaxTimeViewParam;
                 break;
-                
+            
+            case kChannelIDParam:
+                AUBase::FillInParameterName (outParameterInfo, kChannelIDParamName, false);
+                outParameterInfo.unit = kAudioUnitParameterUnit_Indexed;
+                outParameterInfo.minValue = 0.0;
+                outParameterInfo.maxValue = 48.0;
+                outParameterInfo.defaultValue = 1.0;
+                break;    
+            
             default:
                 result = kAudioUnitErr_InvalidParameter;
                 break;
@@ -240,6 +251,8 @@ OSStatus			SpikeAudioUnit::GetProperty(	AudioUnitPropertyID inID,
 }
 
 
+
+// this is deprecated in the new zeromq version
 void SpikeAudioUnit::SpikeAudioUnitKernel::getTriggeredSpikes(TriggeredSpikes *spikes){
 
     // run through once quickly to see how many there are
@@ -307,6 +320,11 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
     const Float32 *sourceP = inSourceP;
 	Float32 *destP = inDestP;
     Float32 threshold = GetParameter( kThresholdParam );
+    int current_channel_id = GetParameter( kChannelIDParam );
+    if(current_channel_id != channel_id){
+        channel_id = current_channel_id;
+        connectChannelSocket(channel_id); 
+    }
     
 //    // always put the data in the ring buffer
     input_buffer_list->SetBytes( inFramesToProcess * sizeof(Float32), (void *)sourceP);
@@ -379,7 +397,7 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
             //const char *serialized_c_str = serialized.c_str();
             zmq::message_t msg(serialized.length());
             memcpy(msg.data(), serialized.c_str(), serialized.length());
-            bool rc = message_socket.send(msg);
+            bool rc = message_socket->send(msg);
             
         
             
@@ -389,6 +407,10 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
             
             
             fresh_spikes++;
+            
+            if(frame_number % 1000 == 0){
+                std::cerr << channel_id << std::endl;
+            }
             
             
 #ifdef EMIT_MIDI
@@ -417,6 +439,8 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
     }
     
 }
+
+int SpikeAudioUnit::channel_count = 0;
 
 
 AUSpikeContainer *SpikeAudioUnit::SpikeAudioUnitKernel::getFreshSpikeContainer(){

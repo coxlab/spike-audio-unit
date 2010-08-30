@@ -70,13 +70,15 @@
 	
     // Other Members
     AudioUnit 				mAU;
-	AudioUnitParameter		mParameter[5];
+	AudioUnitParameter		mParameter[6];
     AUParameterListenerRef	mParameterListener;
     
     NSTimer * capture_timer;
     
     void *message_context;
     void *message_socket;
+    
+    int channel_id;
 }
 
 #pragma mark ____ PUBLIC FUNCTIONS ____

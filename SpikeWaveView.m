@@ -96,7 +96,7 @@
     
     SpikeWaveSelectionAction action;
     
-    NSLog(@"mouse down: %g, %g", pt.x, pt.y);
+    //NSLog(@"mouse down: %g, %g", pt.x, pt.y);
     
     
     if(renderer->hitTest(pt.x, pt.y, &action)){
@@ -159,7 +159,7 @@
 
 - (void)mouseDragged:(NSEvent *)theEvent {
     
-    NSLog(@"mouse drag");
+    //NSLog(@"mouse drag");
     
     if(!adjust_mode){
         return;
@@ -231,7 +231,7 @@
 
 - (void)mouseUp:(NSEvent *)theEvent {
     
-    NSLog(@"mouse up");
+    //NSLog(@"mouse up");
     
     [self exitAdjustMode:adjust_mode];
     adjust_mode = -1;

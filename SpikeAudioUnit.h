@@ -51,6 +51,7 @@
 
 #include <zmq.hpp>
 #include <iostream>
+#include <sstream>
 
 using namespace boost;
 
@@ -81,6 +82,7 @@ static CFStringRef kMinAmplitudeViewParamName = CFSTR("Min Amplitude");
 static CFStringRef kMaxAmplitudeViewParamName = CFSTR("Max Amplitude");
 static CFStringRef kMinTimeViewParamName = CFSTR("Min Time");
 static CFStringRef kMaxTimeViewParamName = CFSTR("Max Time");
+static CFStringRef kChannelIDParamName = CFSTR("Channel ID");
 
 enum {
     kThresholdParam =0,
@@ -88,17 +90,18 @@ enum {
     kMaxAmplitudeViewParam = 2,
     kMinTimeViewParam = 3,
     kMaxTimeViewParam = 4,
-    kNumberOfParameters=5
+    kChannelIDParam = 5,
+    kNumberOfParameters=6
+    
 };
 
 
-
-typedef TThreadSafeList<AUSpikeContainer *> SpikeContainerList;
 
 #pragma mark ____SpikeAudioUnit
 class SpikeAudioUnit : public AUEffectBase
 {
 public:
+    
 	SpikeAudioUnit(AudioUnit component);
 #if AU_DEBUG_DISPATCHER
 	virtual ~SpikeAudioUnit () { delete mDebugDispatcher; }
@@ -131,14 +134,13 @@ public:
 	virtual OSStatus		Version() { return kSpikeAudioUnitVersion; }
 	
     
-
+    static int channel_count;
 
     class SpikeAudioUnitKernel : public AUKernelBase		// most real work happens here
 	{  
         public:
             SpikeAudioUnitKernel(AUEffectBase *inAudioUnit ): AUKernelBase(inAudioUnit),
-                                                              message_ctx(1),
-                                                              message_socket(message_ctx, ZMQ_PUB){ 
+                                                              message_ctx(1){ 
                 
                 midi_endpoint = shared_ptr<MIDIEndpoint>(new MIDIEndpoint("midi_spikes", "default_port", "spike_source"));
                 
@@ -162,15 +164,12 @@ public:
                 
                 capture_buffer_list = CABufferList::New("capture buffer", bufClientDesc );
                 capture_buffer_list->AllocateBuffers(DEFAULT_BUFFER_SIZE * sizeof(Float32));//10 * (PRE_TRIGGER + POST_TRIGGER) * sizeof(Float32));
-            
-                try {
-                    //message_socket.bind("tcp://127.0.0.1:5555");
-                    message_socket.bind("ipc:///tmp/feeds/0");
-                    std::cerr << "ZMQ server bound successfully" << std::endl;
-                    
-                } catch (zmq::error_t& e) {
-                    std::cerr << "ZMQ: " << e.what() << std::endl;
-                }
+                
+                channel_id = (int)GetParameter( kChannelIDParam );
+                                                                  
+                
+                connectChannelSocket(channel_id);
+                
             }
 		
             // *Required* overides for the process method for this effect
@@ -188,6 +187,8 @@ public:
                         
         protected:
         
+            
+        
             int n_triggers;
             
             Float32 last_sample;
@@ -201,7 +202,6 @@ public:
             
             
             int refractory_count;
-            
             
             SpikeContainerList spike_display_queue;  // a thread-safe place to drop triggered waveforms
             //SpikeContainerList spike_recycle_queue;    // a place to recycle used buffers
@@ -219,7 +219,43 @@ public:
             shared_ptr<MIDIEndpoint> midi_endpoint; 
             
             zmq::context_t message_ctx;
-            zmq::socket_t message_socket;
+            shared_ptr<zmq::socket_t> message_socket;
+        
+        int channel_id;
+        
+        void connectChannelSocket(int channel_id){
+            
+            std::cerr << "changing to channel " << channel_id << std::endl;
+            
+            // generate a fresh socket
+            message_socket = shared_ptr<zmq::socket_t>(new zmq::socket_t(message_ctx, ZMQ_PUB));
+            
+            uint64_t hwm = 1000;
+            message_socket->setsockopt(ZMQ_HWM, &hwm, sizeof(uint64_t));
+            
+            // construct the url
+            ostringstream filename_stream, url_stream;
+            
+            // hacky filesystem manipulation
+            filename_stream << "/tmp/spike_channels";
+            
+            string mkdir_command("mkdir -p ");
+            mkdir_command.append(filename_stream.str());
+            system(mkdir_command.c_str());
+            
+            filename_stream << "/" << channel_id;
+            string touch_command("touch ");
+            touch_command.append(filename_stream.str());
+            system(touch_command.c_str());
+            
+            url_stream << "ipc://" << filename_stream.str();
+            try {
+                message_socket->bind(url_stream.str().c_str());
+                std::cerr << "ZMQ server bound successfully" << std::endl;
+            } catch (zmq::error_t& e) {
+                std::cerr << "ZMQ: " << e.what() << std::endl;
+            }
+        }
                
 	};
 };

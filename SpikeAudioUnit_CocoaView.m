@@ -43,6 +43,7 @@
 #import "SpikeAudioUnit_CocoaView.h"
 #include "spike_wave.pb.h"
 #include <string>
+#include <sstream>
 
 using namespace std;
 
@@ -52,7 +53,8 @@ enum {
     kMaxAmplitudeViewParam = 2,
     kMinTimeViewParam = 3,
     kMaxTimeViewParam = 4,
-	kNumberOfParameters=5
+    kChannelIDParam = 5,
+	kNumberOfParameters=6
 };
 
 #pragma mark ____ LISTENER CALLBACK DISPATCHER ____
@@ -93,6 +95,8 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 	if (mAU) [self _removeListeners];
 	mAU = inAU;
     
+    channel_id = 0;
+    
    	for(int i = 0; i < kNumberOfParameters; i++){
         mParameter[i].mAudioUnit = inAU;
         mParameter[i].mScope = kAudioUnitScope_Global;
@@ -108,16 +112,7 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
     
     int rc;
     message_context = zmq_init(1);
-    message_socket = zmq_socket(message_context, ZMQ_SUB);
-    zmq_setsockopt(message_socket, ZMQ_SUBSCRIBE, "", 0);
-    //rc = zmq_connect(message_socket, "tcp://127.0.0.1:5555");
-    rc = zmq_connect(message_socket, "ipc:///tmp/feeds/0");
-    if(rc != 0){
-        std::cerr << "ZMQ: " << zmq_strerror(zmq_errno()) << std::endl;
-    } else {
-        std::cerr << "ZMQ client connected successfully" << std::endl;
-    }
-    
+    [self connectToChannel:channel_id];    
     // setup the timer
     [self setTimer: [NSTimer scheduledTimerWithTimeInterval: (1.0/20.0)
                                                      target: self
@@ -138,6 +133,8 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
                                                    userInfo: nil
                                                     repeats: YES]];	
     }
+    
+    [self connectToChannel:channel_id];
 }
 
 
@@ -216,7 +213,7 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 
 
 - (void) setTriggerThreshold:(Float32)value {
-    NSLog(@"setting threshold...");
+    //NSLog(@"setting threshold...");
     NSAssert(	AUParameterSet(mParameterListener, self, &mParameter[kThresholdParam], (Float32)value, 0) == noErr,
              @"[SpikeAudioUnit_CocoaView iaTriggerThresholdChanged:] AUParameterSet()");
 
@@ -272,7 +269,7 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
     AudioUnitEvent event;
     event.mEventType = kAudioUnitEvent_BeginParameterChangeGesture;
 
-    NSLog(@"enter adjust");
+    //NSLog(@"enter adjust");
     if(mode == SP_TRIGGER_THRESHOLD_SELECT){
         
 		event.mArgument.mParameter = mParameter[kThresholdParam];
@@ -292,7 +289,7 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 
 - (void)exitAdjustMode:(int)mode {
     
-    NSLog(@"exit adjust");
+    //NSLog(@"exit adjust");
     
     AudioUnitEvent event;
     event.mEventType = kAudioUnitEvent_EndParameterChangeGesture;
@@ -408,7 +405,51 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
         case kMaxTimeViewParam:
             renderer->setTimeRangeMax(inValue);
             break;
+        case kChannelIDParam:
+            channel_id = inValue;
+            [self connectToChannel:(int)inValue];
+                       
+            break;
 	}
+}
+
+- (void)connectToChannel:(int)channel_id {
+    
+    if(message_socket != NULL){
+        zmq_close(message_socket);
+    }
+    message_socket = zmq_socket(message_context, ZMQ_SUB);
+    
+    zmq_setsockopt(message_socket, ZMQ_SUBSCRIBE, "", 0);
+    
+    
+    std::cerr << "Client changing to channel " << channel_id << std::endl;
+    
+    // construct the url
+    ostringstream filename_stream, url_stream;
+    
+    // hacky filesystem manipulation
+    filename_stream << "/tmp/spike_channels";
+    
+    string mkdir_command("mkdir -p ");
+    mkdir_command.append(filename_stream.str());
+    system(mkdir_command.c_str());
+    
+    filename_stream << "/" << channel_id;
+    string touch_command("touch ");
+    touch_command.append(filename_stream.str());
+    system(touch_command.c_str());
+    
+    url_stream << "ipc://" << filename_stream.str();
+    
+    int rc = zmq_connect(message_socket, url_stream.str().c_str());
+    
+    if(rc != 0){
+        std::cerr << "ZMQ (client): " << zmq_strerror(zmq_errno()) << std::endl;
+    } else {
+        std::cerr << "ZMQ client connected successfully" << std::endl;
+    }
+    
 }
 
 
