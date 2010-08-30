@@ -49,6 +49,9 @@
 #include "SharedTypes.h"
 #include "MIDIEndpoint.h"
 
+#include <zmq.hpp>
+#include <iostream>
+
 using namespace boost;
 
 #define DEFAULT_BUFFER_SIZE     44100
@@ -133,7 +136,9 @@ public:
     class SpikeAudioUnitKernel : public AUKernelBase		// most real work happens here
 	{  
         public:
-            SpikeAudioUnitKernel(AUEffectBase *inAudioUnit ): AUKernelBase(inAudioUnit){ 
+            SpikeAudioUnitKernel(AUEffectBase *inAudioUnit ): AUKernelBase(inAudioUnit),
+                                                              message_ctx(1,1),
+                                                              message_socket(message_ctx, ZMQ_PUB){ 
                 
                 midi_endpoint = shared_ptr<MIDIEndpoint>(new MIDIEndpoint("midi_spikes", "default_port", "spike_source"));
                 
@@ -144,11 +149,6 @@ public:
                 bufClientDesc.mSampleRate = 44100;
                                 
                 
-                //temp_buffer.mNumberChannels = 1;
-//                temp_buffer.mDataByteSize = sizeof(Float32);
-//                temp_buffer.mData = (void *)malloc(sizeof(Float32));
-//                temp_buffer_list.mNumberBuffers = 1;
-//                temp_buffer_list.mBuffers[0] = temp_buffer;
                 input_buffer_list = CABufferList::New("input intermediate buffer", bufClientDesc);
                 input_buffer_list->AllocateBuffers(10 * (PRE_TRIGGER + POST_TRIGGER) & sizeof(Float32));
                 
@@ -163,10 +163,14 @@ public:
                 capture_buffer_list = CABufferList::New("capture buffer", bufClientDesc );
                 capture_buffer_list->AllocateBuffers(DEFAULT_BUFFER_SIZE * sizeof(Float32));//10 * (PRE_TRIGGER + POST_TRIGGER) * sizeof(Float32));
             
-                //for(int i = 0; i < 1000; i++){
-                    //AUSpikeContainer reserve_container;
-                    //spike_recycle_queue.deferred_add(reserve_container);
-                //}
+                try {
+                    //message_socket.bind("tcp://127.0.0.1:5555");
+                    message_socket.bind("ipc:///tmp/feeds/0");
+                    std::cerr << "ZMQ server bound successfully" << std::endl;
+                    
+                } catch (zmq::error_t& e) {
+                    std::cerr << "ZMQ: " << e.what() << std::endl;
+                }
             }
 		
             // *Required* overides for the process method for this effect
@@ -213,6 +217,9 @@ public:
             AUSpikeContainer *getFreshSpikeContainer();  
             
             shared_ptr<MIDIEndpoint> midi_endpoint; 
+            
+            zmq::context_t message_ctx;
+            zmq::socket_t message_socket;
                
 	};
 };

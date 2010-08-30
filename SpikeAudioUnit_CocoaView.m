@@ -41,6 +41,10 @@
 */
 
 #import "SpikeAudioUnit_CocoaView.h"
+#include "spike_wave.pb.h"
+#include <string>
+
+using namespace std;
 
 enum {
 	kThresholdParam =0,
@@ -102,6 +106,18 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 	// initial setup
 	[self _synchronizeUIWithParameterValues];
     
+    int rc;
+    message_context = zmq_init(1,1,0);
+    message_socket = zmq_socket(message_context, ZMQ_SUB);
+    zmq_setsockopt(message_socket, ZMQ_SUBSCRIBE, "", 0);
+    //rc = zmq_connect(message_socket, "tcp://127.0.0.1:5555");
+    rc = zmq_connect(message_socket, "ipc:///tmp/feeds/0");
+    if(rc != 0){
+        std::cerr << "ZMQ: " << zmq_strerror(zmq_errno()) << std::endl;
+    } else {
+        std::cerr << "ZMQ client connected successfully" << std::endl;
+    }
+    
     // setup the timer
     [self setTimer: [NSTimer scheduledTimerWithTimeInterval: (1.0/20.0)
                                                      target: self
@@ -138,41 +154,47 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 - (void) updateSpikes: (NSTimer*) t
 {	
     
-	UInt32 size = sizeof(TriggeredSpikes);
-    TriggeredSpikes triggered_spikes;
+    int rc;
+	zmq_msg_t msg;
     
-	ComponentResult result = AudioUnitGetProperty(mAU,
-                                  kAudioUnitProperty_TriggeredSpikes,
-                                  kAudioUnitScope_Global,
-                                  0,
-                                  &triggered_spikes,
-                                  &size);	
-	
-    // At this stage, we own every part of triggered_spikes
-    // Ugh, old-school memory management
+    rc = zmq_msg_init (&msg);
+    assert (rc == 0);
     
-	if (result == noErr){
-        if(triggered_spikes.n_spikes){
-            //NSLog(@"got n triggers: %d", triggered_spikes.n_spikes);
-            
-            int start_index = max(0, triggered_spikes.n_spikes - [self maxSpikesToShow]);
-            
-            for(int i = start_index ; i < triggered_spikes.n_spikes; i++){
-                AUSpikeContainer *spike_waveform = triggered_spikes.spike_containers[i];
-                float *buffer = spike_waveform->buffer;
-                //NSLog(@"%f %f %f %f %f %f", buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
-                if(buffer != NULL){
-                    shared_ptr<GLSpikeWave> wave(new GLSpikeWave(PRE_TRIGGER+POST_TRIGGER, -PRE_TRIGGER/44100., 1.0/44100., buffer));
-                    
-                    [self pushData:wave];
-                    spike_waveform->dispose();
-                }
-            }
+    // Receive a message 
+    rc = zmq_recv (message_socket, &msg, ZMQ_NOBLOCK);
+    
+//    if(rc == -1){
+//        std::cerr << zmq_strerror(zmq_errno()) << std::endl;
+//    } else {
+//        std::cerr << "got it" << std::endl;
+//    }
+    
+    while(rc == 0){
+        std::cerr << "RECV" << std::endl;
+
+        string data((const char *)zmq_msg_data(&msg));
+        SpikeWaveBuffer wave;
+        wave.ParseFromString(data);
+        
+        if(wave.wave_sample_size() != PRE_TRIGGER+POST_TRIGGER){
+//            std::cerr << "wrong wave sample size: " << wave.wave_sample_size() << std::endl;
+//            continue;
         }
+        
+        Float32 data_buffer[PRE_TRIGGER+POST_TRIGGER];
+        
+        for(int i = 0; i < wave.wave_sample_size(); i++){
+        
+            data_buffer[i] = wave.wave_sample(i);
+        }
+        
+        shared_ptr<GLSpikeWave> gl_wave(new GLSpikeWave(PRE_TRIGGER+POST_TRIGGER, -PRE_TRIGGER/44100., 1.0/44100., data_buffer));
+        
+        [self pushData:gl_wave];
+        
+        rc = zmq_recv (message_socket, &msg, ZMQ_NOBLOCK);
     }
-    
-    delete [] triggered_spikes.spike_containers;
-    
+
     [self setNeedsDisplay: YES];
         
 }

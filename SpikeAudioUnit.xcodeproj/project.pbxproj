@@ -7,6 +7,17 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		5CD6A52B122B20B10090BF78 /* generate_protocol_buffer */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 5CD6A535122B20BF0090BF78 /* Build configuration list for PBXAggregateTarget "generate_protocol_buffer" */;
+			buildPhases = (
+				5CD6A52A122B20B10090BF78 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = generate_protocol_buffer;
+			productName = ProtocolBuffer;
+		};
 		685E48BF1226ED65004D34CA /* All */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 685E48D01226ED85004D34CA /* Build configuration list for PBXAggregateTarget "All" */;
@@ -48,6 +59,10 @@
 		5CC6339611CA3A3A000AB17E /* SpikeWaveView.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC6339011CA3A3A000AB17E /* SpikeWaveView.h */; };
 		5CC6339711CA3A3A000AB17E /* SpikeWaveView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CC6339111CA3A3A000AB17E /* SpikeWaveView.m */; };
 		5CC633D611CA5452000AB17E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CC633C211CA543B000AB17E /* OpenGL.framework */; };
+		5CD6A53F122B21CE0090BF78 /* spike_wave.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CD6A53D122B21CE0090BF78 /* spike_wave.pb.cc */; };
+		5CD6A540122B21CE0090BF78 /* spike_wave.pb.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CD6A53E122B21CE0090BF78 /* spike_wave.pb.h */; };
+		5CD6A541122B21CE0090BF78 /* spike_wave.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CD6A53D122B21CE0090BF78 /* spike_wave.pb.cc */; };
+		5CD6A542122B21CE0090BF78 /* spike_wave.pb.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CD6A53E122B21CE0090BF78 /* spike_wave.pb.h */; };
 		8B41193E0749636600361ABE /* SpikeAudioUnit.r in Rez */ = {isa = PBXBuildFile; fileRef = 8BA05A680720730100365D66 /* SpikeAudioUnit.r */; };
 		8BA05A6B0720730100365D66 /* SpikeAudioUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8BA05A660720730100365D66 /* SpikeAudioUnit.cpp */; };
 		8BA05A6E0720730100365D66 /* SpikeAudioUnitVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BA05A690720730100365D66 /* SpikeAudioUnitVersion.h */; };
@@ -100,21 +115,28 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		5CD6A543122B21D70090BF78 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5CD6A52B122B20B10090BF78 /* generate_protocol_buffer */;
+			remoteInfo = generate_protocol_buffer;
+		};
+		5CD6A545122B21DA0090BF78 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5CD6A52B122B20B10090BF78 /* generate_protocol_buffer */;
+			remoteInfo = generate_protocol_buffer;
+		};
 		685E48C21226ED67004D34CA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 8D01CCC60486CAD60068D4B7 /* SpikeAudioUnit */;
+			remoteGlobalIDString = 8D01CCC60486CAD60068D4B7;
 			remoteInfo = SpikeAudioUnit;
 		};
 		685E48C41226ED69004D34CA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8BA4AE4D073EB69000A2709A /* CocoaUI */;
-			remoteInfo = CocoaUI;
-		};
-		F7609A450C556A700040AAA6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
 			proxyType = 1;
@@ -163,6 +185,9 @@
 		5CC6339011CA3A3A000AB17E /* SpikeWaveView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpikeWaveView.h; sourceTree = "<group>"; };
 		5CC6339111CA3A3A000AB17E /* SpikeWaveView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpikeWaveView.m; sourceTree = "<group>"; };
 		5CC633C211CA543B000AB17E /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		5CD6A51A122B1F680090BF78 /* spike_wave.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spike_wave.proto; sourceTree = "<group>"; };
+		5CD6A53D122B21CE0090BF78 /* spike_wave.pb.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = spike_wave.pb.cc; sourceTree = "<group>"; };
+		5CD6A53E122B21CE0090BF78 /* spike_wave.pb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spike_wave.pb.h; sourceTree = "<group>"; };
 		8BA05A660720730100365D66 /* SpikeAudioUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SpikeAudioUnit.cpp; sourceTree = "<group>"; };
 		8BA05A670720730100365D66 /* SpikeAudioUnit.exp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.exports; path = SpikeAudioUnit.exp; sourceTree = "<group>"; };
 		8BA05A680720730100365D66 /* SpikeAudioUnit.r */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.rez; path = SpikeAudioUnit.r; sourceTree = "<group>"; };
@@ -304,7 +329,10 @@
 		5CC6333F11C9A6CD000AB17E /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				5CD6A53D122B21CE0090BF78 /* spike_wave.pb.cc */,
+				5CD6A53E122B21CE0090BF78 /* spike_wave.pb.h */,
 				5CC6334011C9A6E7000AB17E /* SharedTypes.h */,
+				5CD6A51A122B1F680090BF78 /* spike_wave.proto */,
 			);
 			name = Shared;
 			sourceTree = "<group>";
@@ -449,6 +477,7 @@
 				5CC6339311CA3A3A000AB17E /* SpikeRenderer.h in Headers */,
 				5CC6339511CA3A3A000AB17E /* SpikeWave.h in Headers */,
 				5CC6339611CA3A3A000AB17E /* SpikeWaveView.h in Headers */,
+				5CD6A542122B21CE0090BF78 /* spike_wave.pb.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -482,6 +511,7 @@
 				5CC631E411C91235000AB17E /* CAThreadSafeList.h in Headers */,
 				5CC6325011C92985000AB17E /* CABufferList.h in Headers */,
 				5CC6334111C9A6E7000AB17E /* SharedTypes.h in Headers */,
+				5CD6A540122B21CE0090BF78 /* spike_wave.pb.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -500,6 +530,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				5CD6A546122B21DA0090BF78 /* PBXTargetDependency */,
 			);
 			name = CocoaUI;
 			productName = CocoaUI;
@@ -521,7 +552,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				F7609A460C556A700040AAA6 /* PBXTargetDependency */,
+				5CD6A544122B21D70090BF78 /* PBXTargetDependency */,
 			);
 			name = SpikeAudioUnit;
 			productInstallPath = "$(HOME)/Library/Bundles";
@@ -544,6 +575,7 @@
 				8D01CCC60486CAD60068D4B7 /* SpikeAudioUnit */,
 				8BA4AE4D073EB69000A2709A /* CocoaUI */,
 				685E48BF1226ED65004D34CA /* All */,
+				5CD6A52B122B20B10090BF78 /* generate_protocol_buffer */,
 			);
 		};
 /* End PBXProject section */
@@ -592,6 +624,19 @@
 			shellPath = /bin/sh;
 			shellScript = "cp -r $BUILT_PRODUCTS_DIR/SpikeAudioUnit.component /Library/Audio/Plug-ins/Components/";
 		};
+		5CD6A52A122B20B10090BF78 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "# shell script goes here\necho ${SRCROOT}\nrm -f ${SRCROOT}/spike_wave.pb.*\ncd ${SRCROOT}\n/usr/bin/env protoc --proto_path=./ --cpp_out=./ spike_wave.proto\nexit 0";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -607,6 +652,7 @@
 				5CC6339211CA3A3A000AB17E /* SpikeRenderer.cpp in Sources */,
 				5CC6339411CA3A3A000AB17E /* SpikeWave.cpp in Sources */,
 				5CC6339711CA3A3A000AB17E /* SpikeWaveView.m in Sources */,
+				5CD6A541122B21CE0090BF78 /* spike_wave.pb.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -633,12 +679,23 @@
 				5CC630EE11C81272000AB17E /* MIDIEndpoint.cpp in Sources */,
 				5CC631E211C91235000AB17E /* CARingBuffer.cpp in Sources */,
 				5CC6325611C929EF000AB17E /* CABufferList.cpp in Sources */,
+				5CD6A53F122B21CE0090BF78 /* spike_wave.pb.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		5CD6A544122B21D70090BF78 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5CD6A52B122B20B10090BF78 /* generate_protocol_buffer */;
+			targetProxy = 5CD6A543122B21D70090BF78 /* PBXContainerItemProxy */;
+		};
+		5CD6A546122B21DA0090BF78 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5CD6A52B122B20B10090BF78 /* generate_protocol_buffer */;
+			targetProxy = 5CD6A545122B21DA0090BF78 /* PBXContainerItemProxy */;
+		};
 		685E48C31226ED67004D34CA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8D01CCC60486CAD60068D4B7 /* SpikeAudioUnit */;
@@ -648,11 +705,6 @@
 			isa = PBXTargetDependency;
 			target = 8BA4AE4D073EB69000A2709A /* CocoaUI */;
 			targetProxy = 685E48C41226ED69004D34CA /* PBXContainerItemProxy */;
-		};
-		F7609A460C556A700040AAA6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8BA4AE4D073EB69000A2709A /* CocoaUI */;
-			targetProxy = F7609A450C556A700040AAA6 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -671,10 +723,15 @@
 		3E0BECFF0898391C00E1F0F7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = SpikeAudioUnit_CocoaViewFactory.plist;
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
+				OTHER_LDFLAGS = (
+					/usr/local/lib/libprotobuf.a,
+					"-lzmq",
+				);
 				PRODUCT_NAME = SpikeAudioUnit_CocoaViewFactory;
 			};
 			name = Debug;
@@ -691,13 +748,18 @@
 		3E0BED030898391C00E1F0F7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				EXPORTED_SYMBOLS_FILE = SpikeAudioUnit.exp;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GENERATE_PKGINFO_FILE = YES;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Audio/Plug-Ins/Components/";
 				LIBRARY_STYLE = Bundle;
-				OTHER_LDFLAGS = "-bundle";
+				OTHER_LDFLAGS = (
+					"-lzmq",
+					/usr/local/lib/libprotobuf.a,
+					"-bundle",
+				);
 				OTHER_REZFLAGS = "-d ppc_$ppc -d i386_$i386 -d ppc64_$ppc64 -d x86_64_$x86_64 -I /System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Versions/A/Headers -I \"$(DEVELOPER_DIR)/Extras/CoreAudio/AudioUnits/AUPublic/AUBase\"";
 				PRODUCT_NAME = SpikeAudioUnit;
 				WRAPPER_EXTENSION = component;
@@ -751,6 +813,27 @@
 			};
 			name = Release;
 		};
+		5CD6A52C122B20B30090BF78 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = ProtocolBuffer;
+			};
+			name = Debug;
+		};
+		5CD6A52D122B20B30090BF78 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = ProtocolBuffer;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		685E48C01226ED65004D34CA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -798,6 +881,15 @@
 			buildConfigurations = (
 				3E0BED070898391C00E1F0F7 /* Debug */,
 				3E0BED080898391C00E1F0F7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		5CD6A535122B20BF0090BF78 /* Build configuration list for PBXAggregateTarget "generate_protocol_buffer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5CD6A52C122B20B30090BF78 /* Debug */,
+				5CD6A52D122B20B30090BF78 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

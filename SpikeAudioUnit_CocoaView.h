@@ -43,9 +43,11 @@
 #import <Cocoa/Cocoa.h>
 #import <AudioUnit/AudioUnit.h>
 #import <AudioToolbox/AudioToolbox.h>
+#import <zmq.h>
 
 #import "SharedTypes.h"
 #import "SpikeWaveView.h"
+
 
 /************************************************************************************************************/
 /* NOTE: It is important to rename ALL ui classes when using the XCode Audio Unit with Cocoa View template	*/
@@ -72,6 +74,9 @@
     AUParameterListenerRef	mParameterListener;
     
     NSTimer * capture_timer;
+    
+    void *message_context;
+    void *message_socket;
 }
 
 #pragma mark ____ PUBLIC FUNCTIONS ____

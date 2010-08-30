@@ -43,6 +43,7 @@ TESTING
 */
 
 #include "SpikeAudioUnit.h"
+#include "spike_wave.pb.h"
 #include <iostream>
 
 //#define EMIT_MIDI
@@ -354,14 +355,40 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
             
             // TRIGGER 
             capture_buffer.Fetch(buffer_list,   PRE_TRIGGER + POST_TRIGGER , frame_number - (PRE_TRIGGER + POST_TRIGGER), false); 
+
+
+            // copy the spike wave into a protocol buffer object
+            SpikeWaveBuffer wave;
+            wave.set_channel_id(51);
+            wave.set_time_stamp(frame_number);
             
-            AUSpikeContainer *container = getFreshSpikeContainer();
-            memcpy(container->buffer, buffer_list->mBuffers[0].mData, (PRE_TRIGGER + POST_TRIGGER) * sizeof(Float32));
+            Float32 *float_buffer = (Float32 *)(buffer_list->mBuffers[0].mData);
+            for(int i = 0; i < (PRE_TRIGGER + POST_TRIGGER); i++){
+                wave.add_wave_sample(*(float_buffer + i));
+            }
+        
+//            memcpy(container->buffer, buffer_list->mBuffers[0].mData, (PRE_TRIGGER + POST_TRIGGER) * sizeof(Float32));
             
-            // schedule this container to be added on the next update
-            spike_display_queue.deferred_add(container);
+            string serialized;
+            wave.SerializeToString(&serialized);
+            //const char *serialized_c_str = serialized.c_str();
+            zmq::message_t msg(serialized.length());
+            memcpy(msg.data(), serialized.c_str(), serialized.length());
+            bool rc = message_socket.send(msg);
+            
+            if(!rc){
+                std::cerr << "ZMQ: " << zmq_strerror(zmq_errno()) << std::endl;
+            } else {
+                std::cerr << "SENT: " << serialized.length() << " bytes" << std::endl;
+            }
+            
             fresh_spikes++;
             
+            
+#ifdef EMIT_MIDI
+            midi_endpoint->sendMessage(0x90, 0x00, 0x7F);
+            midi_endpoint->sendMessage(0x8F, 0x00, 0x7F);
+#endif
             
             pending_trigger = -1; // rearm
             refractory_count = 5;
@@ -373,10 +400,7 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
             } else if(last_sample > threshold && inputSample < threshold){
                 pending_trigger += POST_TRIGGER ; // send out this waveform when it is fully captured
                 
-                #ifdef EMIT_MIDI
-                    midi_endpoint->sendMessage(0x90, 0x00, 0x7F);
-                    midi_endpoint->sendMessage(0x8F, 0x00, 0x7F);
-                #endif
+                
             } 
         }
         
@@ -384,13 +408,6 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
         frame_number++;
         frames_since_last_update++;
         last_sample = inputSample;
-    }
-    
-    // update the display queue so that the ui can get what it needs
-    // THIS CAN ONLY BE CALLED FROM ONE THREAD!!
-    if(fresh_spikes && frames_since_last_update > MIN_FRAMES_BETWEEN_UPDATES){
-        spike_display_queue.update();
-        frames_since_last_update = 0;
     }
     
 }
