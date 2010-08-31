@@ -183,7 +183,6 @@ public:
             virtual void		Reset();
 		
             
-            void getTriggeredSpikes(TriggeredSpikes *spikes); 
                         
         protected:
         
@@ -203,8 +202,6 @@ public:
             
             int refractory_count;
             
-            SpikeContainerList spike_display_queue;  // a thread-safe place to drop triggered waveforms
-            //SpikeContainerList spike_recycle_queue;    // a place to recycle used buffers
             
             CARingBuffer capture_buffer;
             
@@ -213,8 +210,6 @@ public:
             
             CABufferList *input_buffer_list;
             CABufferList *capture_buffer_list;
-            
-            AUSpikeContainer *getFreshSpikeContainer();  
             
             shared_ptr<MIDIEndpoint> midi_endpoint; 
             

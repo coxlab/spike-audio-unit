@@ -101,4 +101,6 @@
 #pragma mark ____ LISTENER CALLBACK DISPATCHEE ____
 - (void)_parameterListener:(void *)inObject parameter:(const AudioUnitParameter *)inParameter value:(Float32)inValue;
 
+- (void)connectToChannel:(int)channel_id;
+
 @end

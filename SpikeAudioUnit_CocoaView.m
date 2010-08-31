@@ -110,7 +110,7 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 	// initial setup
 	[self _synchronizeUIWithParameterValues];
     
-    int rc;
+
     message_context = zmq_init(1);
     [self connectToChannel:channel_id];    
     // setup the timer
@@ -413,7 +413,7 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 	}
 }
 
-- (void)connectToChannel:(int)channel_id {
+- (void)connectToChannel:(int)channel {
     
     if(message_socket != NULL){
         zmq_close(message_socket);
@@ -423,7 +423,7 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
     zmq_setsockopt(message_socket, ZMQ_SUBSCRIBE, "", 0);
     
     
-    std::cerr << "Client changing to channel " << channel_id << std::endl;
+    std::cerr << "Client changing to channel " << channel << std::endl;
     
     // construct the url
     ostringstream filename_stream, url_stream;
@@ -435,7 +435,7 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
     mkdir_command.append(filename_stream.str());
     system(mkdir_command.c_str());
     
-    filename_stream << "/" << channel_id;
+    filename_stream << "/" << channel;
     string touch_command("touch ");
     touch_command.append(filename_stream.str());
     system(touch_command.c_str());

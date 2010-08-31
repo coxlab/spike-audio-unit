@@ -230,20 +230,6 @@ OSStatus			SpikeAudioUnit::GetProperty(	AudioUnitPropertyID inID,
 			}
             break;
                 
-            
-            case kAudioUnitProperty_TriggeredSpikes:
-            {
-                TriggeredSpikes *overview = (TriggeredSpikes *)outData;
-                if(mKernelList.size() > 0){
-                    ((SpikeAudioUnitKernel *)mKernelList[0])->getTriggeredSpikes(overview);
-                } else {
-                    overview->n_spikes = 0;
-                    overview->spike_containers = NULL;
-                }
-                
-                return noErr;
-            }
-            
 		}
 	}
 
@@ -251,43 +237,6 @@ OSStatus			SpikeAudioUnit::GetProperty(	AudioUnitPropertyID inID,
 }
 
 
-
-// this is deprecated in the new zeromq version
-void SpikeAudioUnit::SpikeAudioUnitKernel::getTriggeredSpikes(TriggeredSpikes *spikes){
-
-    // run through once quickly to see how many there are
-    int n_spikes = 0;
-    SpikeContainerList::iterator i = spike_display_queue.begin();
-    while(i != spike_display_queue.end()){
-        i++;
-        n_spikes++;
-    }
-    
-    if(n_spikes == 0){
-        fprintf(stderr, "no spikes to display");
-    }
-    
-    spikes->spike_containers = new AUSpikeContainer*[n_spikes];
-    
-    i = spike_display_queue.begin();
-    int s = 0;
-    while(s < n_spikes && i != spike_display_queue.end()){
-        
-        // shallow copy the data
-        // the buffer now "belongs" to the caller
-        spikes->spike_containers[s] = (*i);
-        
-        // at some point in the future, this will be removed
-        spike_display_queue.deferred_remove(*i);
-
-        i++;
-        s++;
-    }
-    
-    
-    spikes->n_spikes = s;
-
-}
 
 
 #pragma mark ____SpikeAudioUnitEffectKernel
@@ -443,54 +392,4 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
 int SpikeAudioUnit::channel_count = 0;
 
 
-AUSpikeContainer *SpikeAudioUnit::SpikeAudioUnitKernel::getFreshSpikeContainer(){
-  
-
-//#ifdef DONT_RECYCLE_SPIKES
-//  SpikeContainerList::iterator i = spike_recycle_queue.begin();  
-//  if(i != spike_recycle_queue.end()){
-//    AUSpikeContainer recycled_container = *i;
-//    spike_recycle_queue.deferred_remove(*i);
-//    spike_recycle_queue.update();
-//    (*i).dispose();
-//  }
-    
-  AUSpikeContainer *brand_new_spike = new AUSpikeContainer();
-  return brand_new_spike;
-//#else
-//  
-//  // update the recycle queue so any changes from
-//  // the UI thread are reflected
-//  spike_recycle_queue.update();
-//    
-//  SpikeContainerList::iterator i = spike_recycle_queue.begin();
-//  if(i != spike_recycle_queue.end()){
-//      AUSpikeContainer recycled_container = *i;
-//      spike_recycle_queue.deferred_remove(*i);
-//      //spike_recycle_queue.update();
-//      return recycled_container;
-//  } else {
-//      // grab it from the display queue
-//      SpikeContainerList::iterator j = spike_display_queue.begin();
-//      if(j == spike_display_queue.end()){
-//          // Deep shit here
-//          std::cerr << "deep shit" << std::endl;
-//          AUSpikeContainer brand_new;
-//          return brand_new;
-//      }
-//      
-//      SpikeContainerList::iterator j_last = j;
-//      while(j != spike_display_queue.end()){
-//          j_last = j;
-//          j++;
-//      }
-//      
-//      AUSpikeContainer recycled_from_display = *j_last;
-//      spike_display_queue.deferred_remove(*j_last);
-//      spike_display_queue.update();
-//      
-//      return recycled_from_display;
-//  }
-//#endif
-}
                               
