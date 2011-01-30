@@ -91,6 +91,9 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 
 #pragma mark ____ PUBLIC FUNCTIONS ____
 - (void)setAU:(AudioUnit)inAU {
+    
+    message_socket = NULL;
+    
 	// remove previous listeners
 	if (mAU) [self _removeListeners];
 	mAU = inAU;
@@ -112,7 +115,7 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
     
 
     message_context = zmq_init(1);
-    [self connectToChannel:channel_id];    
+    //[self connectToChannel:channel_id];    
     // setup the timer
     [self setTimer: [NSTimer scheduledTimerWithTimeInterval: (1.0/20.0)
                                                      target: self
@@ -134,7 +137,7 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
                                                     repeats: YES]];	
     }
     
-    [self connectToChannel:channel_id];
+    //[self connectToChannel:channel_id];
 }
 
 
@@ -447,7 +450,7 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
     if(rc != 0){
         std::cerr << "ZMQ (client): " << zmq_strerror(zmq_errno()) << std::endl;
     } else {
-        std::cerr << "ZMQ client connected successfully" << std::endl;
+        std::cerr << "ZMQ client connected successfully to " << url_stream.str() << std::endl;
     }
     
 }

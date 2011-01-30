@@ -246,7 +246,7 @@ public:
             url_stream << "ipc://" << filename_stream.str();
             try {
                 message_socket->bind(url_stream.str().c_str());
-                std::cerr << "ZMQ server bound successfully" << std::endl;
+                std::cerr << "ZMQ server bound successfully to " << url_stream.str() << std::endl;
             } catch (zmq::error_t& e) {
                 std::cerr << "ZMQ: " << e.what() << std::endl;
             }
