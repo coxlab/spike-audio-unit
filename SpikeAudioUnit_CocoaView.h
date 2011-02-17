@@ -70,7 +70,7 @@
 	
     // Other Members
     AudioUnit 				mAU;
-	AudioUnitParameter		mParameter[6];
+	AudioUnitParameter		mParameter[kNumberOfParameters];
     AUParameterListenerRef	mParameterListener;
     
     NSTimer * capture_timer;

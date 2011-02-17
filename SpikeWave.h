@@ -72,6 +72,11 @@ namespace spike_visualization {
             data_interval = _data_interval;
         }
         
+        void scaleByFactor(double factor){
+            for(int i = 0; i < length; i++){
+                data[i] *= factor;
+            }
+        }
         
     };
     

@@ -48,6 +48,7 @@
 #include <boost/shared_ptr.hpp>
 #include "SharedTypes.h"
 #include "MIDIEndpoint.h"
+#include <AudioToolbox/AudioUnitUtilities.h>
 
 #include <zmq.hpp>
 #include <iostream>
@@ -76,6 +77,11 @@ static const float kDefaultValue_MinAmplitudeViewParam = -0.000100;
 static const float kDefaultValue_MaxAmplitudeViewParam = 0.000100;
 static const float kDefaultValue_MinTimeViewParam = -0.00125;
 static const float kDefaultValue_MaxTimeViewParam = 0.00125;
+static const float kDefaultValue_GainParam = 1.0;
+static const float kDefaultValue_UnitsPerVoltParam = 1.0;
+static const float kDefaultValue_AutoThresholdHighParam = 0.0;
+static const float kDefaultValue_AutoThresholdLowParam = 0.0;
+static const float kDefaultValue_AutoThresholdFactorParam = 3.0;
 
 static CFStringRef kThresholdParamName = CFSTR("Trigger Threshold");
 static CFStringRef kMinAmplitudeViewParamName = CFSTR("Min Amplitude");
@@ -83,17 +89,11 @@ static CFStringRef kMaxAmplitudeViewParamName = CFSTR("Max Amplitude");
 static CFStringRef kMinTimeViewParamName = CFSTR("Min Time");
 static CFStringRef kMaxTimeViewParamName = CFSTR("Max Time");
 static CFStringRef kChannelIDParamName = CFSTR("Channel ID");
-
-enum {
-    kThresholdParam =0,
-    kMinAmplitudeViewParam = 1,
-    kMaxAmplitudeViewParam = 2,
-    kMinTimeViewParam = 3,
-    kMaxTimeViewParam = 4,
-    kChannelIDParam = 5,
-    kNumberOfParameters=6
-    
-};
+static CFStringRef kGainParamName = CFSTR("Preamplification Gain");
+static CFStringRef kUnitsPerVoltParamName = CFSTR("CoreAudio units / volt");
+static CFStringRef kAutoThresholdHighParamName = CFSTR("Auto-threshold (HIGH)");
+static CFStringRef kAutoThresholdLowParamName = CFSTR("Auto-threshold (LOW)");
+static CFStringRef kAutoThresholdFactorParamName = CFSTR("Auto-threshold factor (stdevs)");
 
 
 
@@ -142,7 +142,7 @@ public:
             SpikeAudioUnitKernel(AUEffectBase *inAudioUnit ): AUKernelBase(inAudioUnit),
                                                               message_ctx(1){ 
                 
-                midi_endpoint = shared_ptr<MIDIEndpoint>(new MIDIEndpoint("midi_spikes", "default_port", "spike_source"));
+                //midi_endpoint = shared_ptr<MIDIEndpoint>(new MIDIEndpoint("midi_spikes", "default_port", "spike_source"));
                 
                 capture_buffer.Allocate(1, sizeof(Float32), DEFAULT_BUFFER_SIZE);//2048);
                 
@@ -182,6 +182,19 @@ public:
             
             virtual void		Reset();
 		
+                
+            void setGlobalParameter(AudioUnitParameterID param_id, AudioUnitParameterValue val){
+                mAudioUnit->SetParameter(param_id, val);
+                
+                //mAudioUnit->Globals()->SetParameter(param_id, val);
+                
+                AudioUnitParameter param;
+                param.mAudioUnit = mAudioUnit->GetComponentInstance();
+                param.mScope = kAudioUnitScope_Global;
+                param.mParameterID = param_id;
+                
+                AUParameterListenerNotify(NULL, NULL, &param);
+            }
             
                         
         protected:
@@ -216,41 +229,43 @@ public:
             zmq::context_t message_ctx;
             shared_ptr<zmq::socket_t> message_socket;
         
-        int channel_id;
+            int channel_id;
         
-        void connectChannelSocket(int channel_id){
-            
-            std::cerr << "changing to channel " << channel_id << std::endl;
-            
-            // generate a fresh socket
-            message_socket = shared_ptr<zmq::socket_t>(new zmq::socket_t(message_ctx, ZMQ_PUB));
-            
-            uint64_t hwm = 1000;
-            message_socket->setsockopt(ZMQ_HWM, &hwm, sizeof(uint64_t));
-            
-            // construct the url
-            ostringstream filename_stream, url_stream;
-            
-            // hacky filesystem manipulation
-            filename_stream << "/tmp/spike_channels";
-            
-            string mkdir_command("mkdir -p ");
-            mkdir_command.append(filename_stream.str());
-            system(mkdir_command.c_str());
-            
-            filename_stream << "/" << channel_id;
-            string touch_command("touch ");
-            touch_command.append(filename_stream.str());
-            system(touch_command.c_str());
-            
-            url_stream << "ipc://" << filename_stream.str();
-            try {
-                message_socket->bind(url_stream.str().c_str());
-                std::cerr << "ZMQ server bound successfully to " << url_stream.str() << std::endl;
-            } catch (zmq::error_t& e) {
-                std::cerr << "ZMQ: " << e.what() << std::endl;
+            void connectChannelSocket(int channel_id){
+                
+                std::cerr << "changing to channel " << channel_id << std::endl;
+                
+                // generate a fresh socket
+                message_socket = shared_ptr<zmq::socket_t>(new zmq::socket_t(message_ctx, ZMQ_PUB));
+                
+                uint64_t hwm = 1000;
+                message_socket->setsockopt(ZMQ_HWM, &hwm, sizeof(uint64_t));
+                
+                // construct the url
+                ostringstream filename_stream, url_stream;
+                
+                // hacky filesystem manipulation
+                filename_stream << "/tmp/spike_channels";
+                
+                string mkdir_command("mkdir -p ");
+                mkdir_command.append(filename_stream.str());
+                system(mkdir_command.c_str());
+                
+                filename_stream << "/" << channel_id;
+                string touch_command("touch ");
+                touch_command.append(filename_stream.str());
+                system(touch_command.c_str());
+                
+                url_stream << "ipc://" << filename_stream.str();
+                try {
+                    message_socket->bind(url_stream.str().c_str());
+                    std::cerr << "ZMQ server bound successfully to " << url_stream.str() << std::endl;
+                } catch (zmq::error_t& e) {
+                    std::cerr << "ZMQ: " << e.what() << std::endl;
+                }
             }
-        }
+        
+        
                
 	};
 };

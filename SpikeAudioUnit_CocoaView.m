@@ -47,15 +47,8 @@
 
 using namespace std;
 
-enum {
-	kThresholdParam =0,
-    kMinAmplitudeViewParam = 1,
-    kMaxAmplitudeViewParam = 2,
-    kMinTimeViewParam = 3,
-    kMaxTimeViewParam = 4,
-    kChannelIDParam = 5,
-	kNumberOfParameters=6
-};
+#include "SharedTypes.h"
+
 
 #pragma mark ____ LISTENER CALLBACK DISPATCHER ____
 void ParameterListenerDispatcher (void *inRefCon, void *inObject, const AudioUnitParameter *inParameter, Float32 inValue) {
@@ -116,7 +109,7 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 
     message_context = zmq_init(1);
     //[self connectToChannel:channel_id];    
-    // setup the timer
+    // setup the timer 
     [self setTimer: [NSTimer scheduledTimerWithTimeInterval: (1.0/20.0)
                                                      target: self
                                                    selector: @selector(updateSpikes:)
@@ -212,6 +205,11 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 		[capture_timer release];
 		capture_timer = [value retain];
 	}
+}
+
+
+- (void) setTriggerThresholdSilent:(Float32)value {
+    [super setTriggerThreshold:value];
 }
 
 
@@ -394,7 +392,7 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
     
 	switch (inParameter->mParameterID) {
 		case kThresholdParam:
-            [self setTriggerThreshold:inValue];
+            [self setTriggerThresholdSilent:inValue];
             break;
         case kMinAmplitudeViewParam:
             renderer->setAmplitudeRangeMin(inValue);
@@ -413,6 +411,13 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
             [self connectToChannel:(int)inValue];
                        
             break;
+        case kUnitsPerVoltParam:
+            renderer->setUnitsPerVolt(inValue);
+            break;
+        case kGainParam:
+            renderer->setAmplifierGain(inValue);
+            break;
+            
 	}
 }
 

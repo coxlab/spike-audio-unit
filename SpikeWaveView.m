@@ -23,13 +23,12 @@
                                  0.099,
                                  -0.00125,
                                  0.00125);
-                                 
-    //junk_data_timer = [NSTimer scheduledTimerWithTimeInterval:0.05 target:self selector:@selector(pushJunkData) userInfo:Nil repeats: YES];
-    //srand(0);
     
     adjust_mode = -1;
                                  
 }
+
+
 
 - (int) maxSpikesToShow {
     return renderer->getMaxSpikesToShow();
@@ -61,7 +60,6 @@
 
 - (void)drawRect:(NSRect)dirtyRect {
     renderer->render();
-    //[[self openGLContext] flushBuffer];
 }
 
 
@@ -89,6 +87,10 @@
     renderer->setAmplitudeRangeMax(value);
 }
 
+
+- (void) setUnitsPerVolt:(Float32)value{
+    renderer->setUnitsPerVolt(value);
+}
 
 - (void)mouseDown:(NSEvent *)theEvent {
 
@@ -122,15 +124,6 @@
         }
             
     }
-    
-    
-    
-    
-//    SpikeWaveSelectionAction action = renderer->hitTest(pt.x, pt.y);
-//    
-//    if(action.type == THRESHOLD_SELECT_ACTION){
-//    
-//    }
     
 }
 

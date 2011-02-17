@@ -45,6 +45,7 @@ TESTING
 #include "SpikeAudioUnit.h"
 #include "spike_wave.pb.h"
 #include <iostream>
+#include <math.h>
 
 //#define EMIT_MIDI
 
@@ -66,7 +67,12 @@ SpikeAudioUnit::SpikeAudioUnit(AudioUnit component)
     SetParameter(kMaxAmplitudeViewParam, kDefaultValue_MaxAmplitudeViewParam );
     SetParameter(kMinTimeViewParam, kDefaultValue_MinTimeViewParam );
     SetParameter(kMaxTimeViewParam, kDefaultValue_MaxTimeViewParam );
+    SetParameter(kGainParam, kDefaultValue_GainParam );
+    SetParameter(kUnitsPerVoltParam, kDefaultValue_UnitsPerVoltParam );
     SetParameter(kChannelIDParam, SpikeAudioUnit::channel_count++);
+    SetParameter(kAutoThresholdHighParam, kDefaultValue_AutoThresholdHighParam );
+    SetParameter(kAutoThresholdLowParam, kDefaultValue_AutoThresholdLowParam );
+    SetParameter(kAutoThresholdFactorParam, kDefaultValue_AutoThresholdFactorParam );
     
 #if AU_DEBUG_DISPATCHER
 	mDebugDispatcher = new AUDebugDispatcher (this);
@@ -105,7 +111,7 @@ OSStatus			SpikeAudioUnit::GetParameterInfo(AudioUnitScope		inScope,
         {
             case kThresholdParam:
                 AUBase::FillInParameterName (outParameterInfo, kThresholdParamName, false);
-                outParameterInfo.unit = kAudioUnitParameterUnit_LinearGain;
+                outParameterInfo.unit = kAudioUnitParameterUnit_Generic;
                 outParameterInfo.minValue = -1.0;
                 outParameterInfo.maxValue = 1;
                 outParameterInfo.defaultValue = kDefaultValue_ThresholdParam;
@@ -113,7 +119,7 @@ OSStatus			SpikeAudioUnit::GetParameterInfo(AudioUnitScope		inScope,
             
             case kMinAmplitudeViewParam:
                 AUBase::FillInParameterName (outParameterInfo, kMinAmplitudeViewParamName, false);
-                outParameterInfo.unit = kAudioUnitParameterUnit_LinearGain;
+                outParameterInfo.unit = kAudioUnitParameterUnit_Generic;
                 outParameterInfo.minValue = -1.0;
                 outParameterInfo.maxValue = 1;
                 outParameterInfo.defaultValue = kDefaultValue_MinAmplitudeViewParam;
@@ -121,7 +127,7 @@ OSStatus			SpikeAudioUnit::GetParameterInfo(AudioUnitScope		inScope,
                 
             case kMaxAmplitudeViewParam:
                 AUBase::FillInParameterName (outParameterInfo, kMaxAmplitudeViewParamName, false);
-                outParameterInfo.unit = kAudioUnitParameterUnit_LinearGain;
+                outParameterInfo.unit = kAudioUnitParameterUnit_Generic;
                 outParameterInfo.minValue = -1.0;
                 outParameterInfo.maxValue = 1;
                 outParameterInfo.defaultValue = kDefaultValue_MaxAmplitudeViewParam;
@@ -129,7 +135,7 @@ OSStatus			SpikeAudioUnit::GetParameterInfo(AudioUnitScope		inScope,
                 
             case kMinTimeViewParam:
                 AUBase::FillInParameterName (outParameterInfo, kMinTimeViewParamName, false);
-                outParameterInfo.unit = kAudioUnitParameterUnit_LinearGain;
+                outParameterInfo.unit = kAudioUnitParameterUnit_Seconds;
                 outParameterInfo.minValue = -1.0;
                 outParameterInfo.maxValue = 1;
                 outParameterInfo.defaultValue = kDefaultValue_MinTimeViewParam;
@@ -139,7 +145,7 @@ OSStatus			SpikeAudioUnit::GetParameterInfo(AudioUnitScope		inScope,
                 
             case kMaxTimeViewParam:
                 AUBase::FillInParameterName (outParameterInfo, kMaxTimeViewParamName, false);
-                outParameterInfo.unit = kAudioUnitParameterUnit_LinearGain;
+                outParameterInfo.unit = kAudioUnitParameterUnit_Seconds;
                 outParameterInfo.minValue = -1.0;
                 outParameterInfo.maxValue = 1;
                 outParameterInfo.defaultValue = kDefaultValue_MaxTimeViewParam;
@@ -152,6 +158,49 @@ OSStatus			SpikeAudioUnit::GetParameterInfo(AudioUnitScope		inScope,
                 outParameterInfo.maxValue = 48.0;
                 outParameterInfo.defaultValue = 1.0;
                 break;    
+            
+            case kGainParam:
+                AUBase::FillInParameterName (outParameterInfo, kGainParamName, false);
+                outParameterInfo.unit = kAudioUnitParameterUnit_LinearGain;
+                outParameterInfo.minValue = 0.0;
+                outParameterInfo.maxValue = 100000.0;
+                outParameterInfo.defaultValue = kDefaultValue_GainParam;
+                //outParameterInfo.flags = kAudioUnitParameterFlag_DisplayLogarithmic ;
+                break;
+            
+            case kUnitsPerVoltParam:
+                AUBase::FillInParameterName (outParameterInfo, kUnitsPerVoltParamName, false);
+                outParameterInfo.unit = kAudioUnitParameterUnit_Ratio;
+                outParameterInfo.minValue = 0.0;
+                outParameterInfo.maxValue = 20.0;
+                outParameterInfo.defaultValue = kDefaultValue_UnitsPerVoltParam;
+                break;
+            
+            
+            case kAutoThresholdHighParam:
+                AUBase::FillInParameterName (outParameterInfo, kAutoThresholdHighParamName, false);
+                outParameterInfo.unit = kAudioUnitParameterUnit_Boolean;
+                outParameterInfo.minValue = 0.0;
+                outParameterInfo.maxValue = 1.0;
+                outParameterInfo.defaultValue = kDefaultValue_AutoThresholdHighParam;
+                break;
+
+
+            case kAutoThresholdLowParam:
+                AUBase::FillInParameterName (outParameterInfo, kAutoThresholdLowParamName, false);
+                outParameterInfo.unit = kAudioUnitParameterUnit_Boolean;
+                outParameterInfo.minValue = 0.0;
+                outParameterInfo.maxValue = 1.0;
+                outParameterInfo.defaultValue = kDefaultValue_AutoThresholdLowParam;
+                break;
+            
+            case kAutoThresholdFactorParam:
+                AUBase::FillInParameterName (outParameterInfo, kAutoThresholdFactorParamName, false);
+                outParameterInfo.unit = kAudioUnitParameterUnit_Generic;
+                outParameterInfo.minValue = 1.0;
+                outParameterInfo.maxValue = 5.0;
+                outParameterInfo.defaultValue = kDefaultValue_AutoThresholdFactorParam;
+                break;
             
             default:
                 result = kAudioUnitErr_InvalidParameter;
@@ -268,28 +317,54 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
 	
     const Float32 *sourceP = inSourceP;
 	Float32 *destP = inDestP;
-    Float32 threshold = GetParameter( kThresholdParam );
+    Float32 threshold = GetParameter( kThresholdParam ) * (GetParameter(kUnitsPerVoltParam) * GetParameter(kGainParam));
     int current_channel_id = GetParameter( kChannelIDParam );
     if(current_channel_id != channel_id){
         channel_id = current_channel_id;
         connectChannelSocket(channel_id); 
     }
     
-//    // always put the data in the ring buffer
+    // always put the data in the ring buffer
     input_buffer_list->SetBytes( inFramesToProcess * sizeof(Float32), (void *)sourceP);
     AudioBufferList abl;
     capture_buffer.Store(input_buffer_list->ToAudioBufferList(&abl), inFramesToProcess, frame_number);
-//    Float32 *buffer = (Float32 *)(temp_buffer_list.mBuffers[0].mData);
-//    buffer[0] = inputSample;
-//    capture_buffer.Store(&temp_buffer_list, 1, frame_number);
-    
-    
-    //spike_display_queue.update();
-    //spike_recycle_queue.update();
+
     
     int fresh_spikes = 0;
     static int frames_since_last_update = 0;
-#define MIN_FRAMES_BETWEEN_UPDATES  4000
+    static float crest_factor = 0.0; 
+    static float sample_sum = 0.0;
+    static float sample_sumsq = 0.0;
+    static int autothresholding_count = 0;
+    
+    static bool autothresholding_armed = false;
+    
+    bool autothreshold_high = GetParameter(kAutoThresholdHighParam);
+    bool autothreshold_low = GetParameter(kAutoThresholdLowParam);
+    static int n_autothreshold_samples = 0;
+    
+    #define AUTOTHRESHOLD_NSAMPLES  44100
+    
+    // arm the autothresholding mechanism
+    if(autothreshold_high || autothreshold_low){
+        autothresholding_armed = true;
+        autothresholding_count = AUTOTHRESHOLD_NSAMPLES;
+        n_autothreshold_samples = 0;
+        crest_factor = GetParameter(kAutoThresholdFactorParam);
+        sample_sum = 0.0;
+        sample_sumsq = 0.0;
+        
+        if(autothreshold_low){
+            crest_factor *= -1;
+            setGlobalParameter(kAutoThresholdLowParam, false);
+        } else {
+            setGlobalParameter(kAutoThresholdHighParam, false);
+        }
+        
+    }
+        
+    
+    #define MIN_FRAMES_BETWEEN_UPDATES  4000
     
 	while (nSampleFrames-- > 0) {
         
@@ -301,12 +376,33 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
 		sourceP += inNumChannels;	// advance to next frame (e.g. if stereo, we're advancing 2 samples);
 									// we're only processing one of an arbitrary number of interleaved channels
 
-        // here's where you do your DSP work
+        // here's we would do DSP work, if we were doing any
         Float32 outputSample = inputSample;
         
         // Simply pass on the data to the rest of CoreAudio
 		*destP = outputSample;
 		destP += inNumChannels;
+        
+        
+        
+        
+        if(autothresholding_armed && autothresholding_count > 0){
+            sample_sum += inputSample;
+            sample_sumsq += inputSample*inputSample;
+            
+            autothresholding_count--;
+            n_autothreshold_samples++;
+        }
+        
+        if(autothresholding_armed && autothresholding_count <= 0){
+            autothresholding_armed = false;
+            float sample_std = sqrt((sample_sumsq / n_autothreshold_samples) - 
+                                    (sample_sum/n_autothreshold_samples) * (sample_sum/n_autothreshold_samples)) ;
+            
+            float new_thresh = (crest_factor * sample_std) / (GetParameter(kUnitsPerVoltParam) * GetParameter(kGainParam));
+            setGlobalParameter(kThresholdParam, new_thresh);
+            std::cerr << "set threshold to: " << new_thresh << std::endl;
+        }
         
         if(pending_trigger > 0){  // trigger is pending
             pending_trigger--;
@@ -314,16 +410,12 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
         } else if(pending_trigger == 0){
             
             n_triggers++;
-            //if(n_triggers % 100 == 0){
-            //  std::cerr << "ntrigger: " << n_triggers << std::endl;
-            //}
             
             AudioBufferList *buffer_list = &capture_buffer_list->GetModifiableBufferList();
             
             // TRIGGER 
             capture_buffer.Fetch(buffer_list,   PRE_TRIGGER + POST_TRIGGER , frame_number - (PRE_TRIGGER + POST_TRIGGER), false); 
 
-            
             
             // copy the spike wave into a protocol buffer object
             SpikeWaveBuffer wave;
@@ -338,12 +430,9 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
             for(int i = 0; i < (PRE_TRIGGER + POST_TRIGGER); i++){
                 wave.add_wave_sample(*(float_buffer + i));
             }
-        
-//            memcpy(container->buffer, buffer_list->mBuffers[0].mData, (PRE_TRIGGER + POST_TRIGGER) * sizeof(Float32));
-            
+                    
             string serialized;
             wave.SerializeToString(&serialized);
-            //const char *serialized_c_str = serialized.c_str();
             zmq::message_t msg(serialized.length());
             memcpy(msg.data(), serialized.c_str(), serialized.length());
             bool rc = message_socket->send(msg);

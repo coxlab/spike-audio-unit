@@ -568,7 +568,14 @@
 			isa = PBXProject;
 			buildConfigurationList = 3E0BED060898391C00E1F0F7 /* Build configuration list for PBXProject "SpikeAudioUnit" */;
 			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
 			mainGroup = 089C166AFE841209C02AAC07 /* SpikeAudioUnit */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -636,7 +643,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# shell script goes here\necho ${SRCROOT}\nrm -f ${SRCROOT}/spike_wave.pb.*\ncd ${SRCROOT}\n/usr/bin/env protoc --proto_path=./ --cpp_out=./ spike_wave.proto\nexit 0";
+			shellScript = "# shell script goes here\necho ${SRCROOT}\nrm -f ${SRCROOT}/spike_wave.pb.*\ncd ${SRCROOT}\n/usr/local/bin/protoc --proto_path=./ --cpp_out=./ spike_wave.proto\nexit 0";
 		};
 		687C66CF122C306F007D82E2 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;

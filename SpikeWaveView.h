@@ -40,6 +40,7 @@ using namespace spike_visualization;
 - (void) setTimeRangeMax:(Float32)value;
 - (void) setAmplitudeRangeMin:(Float32)value;
 - (void) setAmplitudeRangeMax:(Float32)value;
+- (void) setUnitsPerVolt:(Float32)value;
 
 - (int) maxSpikesToShow;
 @end

@@ -16,6 +16,23 @@
 #define PRE_TRIGGER     33
 #define POST_TRIGGER    33
 
+
+enum {
+    kThresholdParam =0,
+    kMinAmplitudeViewParam = 1,
+    kMaxAmplitudeViewParam = 2,
+    kMinTimeViewParam = 3,
+    kMaxTimeViewParam = 4,
+    kChannelIDParam = 5,
+    kGainParam = 6,
+    kUnitsPerVoltParam = 7,
+    kAutoThresholdFactorParam = 8,
+    kAutoThresholdHighParam = 9,
+    kAutoThresholdLowParam = 10,
+    kNumberOfParameters=11
+    
+};
+
 enum
 {
 	kAudioUnitProperty_TriggeredSpikes = 65536,

@@ -100,6 +100,11 @@ namespace spike_visualization {
             
             //vector< shared_ptr<DiscriminatorWindowSet> > window_sets;
             
+            // unit translation
+            float units_per_volt;
+            
+            // amplifier gain factor
+            float amplifier_gain;
             
             // view dimensions in pixels
             GLfloat view_width;
@@ -165,6 +170,7 @@ namespace spike_visualization {
                           GLfloat _min_time,
                           GLfloat _max_time){
                           
+                units_per_volt = 1;
                 n_window_sets = _n_window_sets;
                 n_windows_per_set = _n_windows_per_set;
                 
@@ -212,6 +218,12 @@ namespace spike_visualization {
                 
             }
             
+            float getUnitsPerVolt() { return units_per_volt; }
+            void setUnitsPerVolt(float _units_per_volt) { units_per_volt = _units_per_volt; } 
+            
+            float getAmplifierGain(){ return amplifier_gain; }
+            void setAmplifierGain(float _gain) { amplifier_gain = _gain; }
+            
             GLfloat getAmplitudeRangeMax(){ return amplitude_range_max_volts; }
             GLfloat getAmplitudeRangeMin(){ return amplitude_range_min_volts; }
         
@@ -224,7 +236,7 @@ namespace spike_visualization {
             void setTimeRangeMax(GLfloat new_max){ time_range_max_seconds = new_max; }
             void setTimeRangeMin(GLfloat new_min){ time_range_min_seconds = new_min; }
             
-        int getMaxSpikesToShow(){ return max_spikes_to_show; }
+            int getMaxSpikesToShow(){ return max_spikes_to_show; }
         
             bool hitTest(GLfloat view_x, GLfloat view_y, SpikeWaveSelectionAction *action){
                 
@@ -243,7 +255,7 @@ namespace spike_visualization {
             
             
             void pushSpikeWave(shared_ptr<GLSpikeWave> spike_wave){
-            
+                                
                 spike_list.push_back(spike_wave);
                 
                 if(spike_list.size() > (unsigned int)max_spikes_to_show){
@@ -314,6 +326,14 @@ namespace spike_visualization {
                 
                 *view_x = data_x * data_viewport_width / (time_range_max_seconds - time_range_min_seconds);
                 *view_y = data_y * data_viewport_height / (amplitude_range_max_volts - amplitude_range_min_volts);
+            }
+            
+            float convertVoltsToUnits(float inval){
+                return inval * units_per_volt * amplifier_gain;
+            }
+            
+            float convertUnitsToVolts(float inval){
+                return inval / (units_per_volt * amplifier_gain);
             }
             
             // trigger threshold
@@ -446,6 +466,7 @@ namespace spike_visualization {
                 for(i = spike_list.begin(); i != spike_list.end(); ++i){
                     shared_ptr<GLSpikeWave> wave = *i;
                     GLfloat *thedata = wave->getData();
+                       
                     GLfloat time_offset = wave->getStartTime();
                     GLfloat data_interval = wave->getDataInterval();
                     int length = wave->getLength();
@@ -455,7 +476,7 @@ namespace spike_visualization {
                     glBegin(GL_LINE_STRIP);
                     for(int j = 0; j < length; j++){
                         
-                        glVertex2f(time_offset + j*data_interval, thedata[j]); 
+                        glVertex2f(time_offset + j*data_interval, convertUnitsToVolts(thedata[j])); 
                     }
                     glEnd();
                     
@@ -482,16 +503,16 @@ namespace spike_visualization {
                 
                 // determine appropriate units
                 string unit_string;
-                float unit_multiplier = 1;
+                float unit_multiplier = 1.0;
                 float test_case = max(fabs(amplitude_range_max_volts), fabs(amplitude_range_min_volts));
                 if(test_case < 0.1 && test_case >= 0.001){
                     // MILLIVOLTS
                     unit_string = "mV";
-                    unit_multiplier = 1000.0;
+                    unit_multiplier *= 1000.0;
                 } else if(test_case < 0.001 && test_case > 0.000001){
                     // MICROVOLTS
                     unit_string = "uV";
-                    unit_multiplier = 1000000.0;
+                    unit_multiplier *= 1000000.0;
                 } else {
                     // VOLTS
                     unit_string = "V";
