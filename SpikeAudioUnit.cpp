@@ -401,6 +401,13 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
             
             float new_thresh = (crest_factor * sample_std) / (GetParameter(kUnitsPerVoltParam) * GetParameter(kGainParam));
             setGlobalParameter(kThresholdParam, new_thresh);
+            
+            float dir = 1.0;
+            if(new_thresh < 0.0){
+                dir = -1.0;
+            }
+            setGlobalParameter(kMaxAmplitudeViewParam, dir * new_thresh * 1.2);
+            setGlobalParameter(kMinAmplitudeViewParam, dir * new_thresh * -1.2);
             std::cerr << "set threshold to: " << new_thresh << std::endl;
         }
         

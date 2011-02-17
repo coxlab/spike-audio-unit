@@ -24,6 +24,8 @@
 #define SP_AMPLITUDE_MIN_SELECT 3
 #define SP_TIME_MAX_SELECT 4
 #define SP_TIME_MIN_SELECT 5
+#define SP_AUTOTHRESH_UP_SELECT 6
+#define SP_AUTOTHRESH_DOWN_SELECT 7
 
 namespace spike_visualization {
     
@@ -121,6 +123,11 @@ namespace spike_visualization {
             GLfloat range_frame_major_tick_length;
             GLfloat top_padding, left_padding, right_padding, bottom_padding;
             
+            
+            GLfloat auto_threshold_buttons_edge_offset;
+            GLfloat auto_threshold_buttons_width;
+            GLfloat auto_threshold_buttons_height;
+            GLfloat auto_threshold_buttons_separation;
         
             // bounds for the plotting area (natural units)
             GLfloat amplitude_range_max_volts;
@@ -158,6 +165,8 @@ namespace spike_visualization {
             shared_ptr< RectangularHitTestRegion > amplitude_min_region; // knob to move amplitude scale
             shared_ptr< RectangularHitTestRegion > time_max_region; // knob to move amplitude scale
             shared_ptr< RectangularHitTestRegion > time_min_region; // knob to move amplitude scale
+            shared_ptr< RectangularHitTestRegion > auto_threshold_up_region;
+            shared_ptr< RectangularHitTestRegion > auto_threshold_down_region;
         
         public:
 
@@ -183,10 +192,15 @@ namespace spike_visualization {
                 horizontal_range_frame_offset = 15;
                 vertical_range_frame_width = 30;
                 horizontal_range_frame_height = 30;
-                top_padding = 10;
+                top_padding = 20;
                 left_padding = 20;
                 right_padding = 20;
                 bottom_padding = 10;
+                
+                auto_threshold_buttons_edge_offset = 5;
+                auto_threshold_buttons_width = 7;
+                auto_threshold_buttons_height = 7;
+                auto_threshold_buttons_separation = 3;
                 
                 range_frame_major_tick_length = 5;
                 range_frame_font_size = 6.0;
@@ -214,6 +228,12 @@ namespace spike_visualization {
 
                 time_min_region = shared_ptr< RectangularHitTestRegion >(new RectangularHitTestRegion(0.0,0.0,0.0,0.0, SP_TIME_MIN_SELECT, 0, 0));
                 hit_test_regions.push_back(time_min_region);
+
+                auto_threshold_up_region = shared_ptr< RectangularHitTestRegion >(new RectangularHitTestRegion(0.0,0.0,0.0,0.0, SP_AUTOTHRESH_UP_SELECT, 0, 0));
+                hit_test_regions.push_back(auto_threshold_up_region); 
+
+                auto_threshold_down_region = shared_ptr< RectangularHitTestRegion >(new RectangularHitTestRegion(0.0,0.0,0.0,0.0, SP_AUTOTHRESH_DOWN_SELECT, 0, 0));
+                hit_test_regions.push_back(auto_threshold_down_region); 
 
                 
             }
@@ -359,9 +379,12 @@ namespace spike_visualization {
                 selectFullViewport();
                 renderVerticalRangeFrame();
                 renderHorizontalRangeFrame();
+                renderAutoThresholdButtons();
                 renderThresholdKnob();
                 glPopMatrix();
             
+               
+                
                 glPushMatrix();
                 selectDataViewport();
                 renderWaves();
@@ -484,6 +507,50 @@ namespace spike_visualization {
                 }
             
                 glPopAttrib();
+            }
+            
+            
+            void renderAutoThresholdButtons(){
+            
+                glColor3f(0.6, 0.0, 0.0);
+                
+                // the "up" button
+                GLfloat left = view_width - 2. * auto_threshold_buttons_width - 
+                                                auto_threshold_buttons_edge_offset - 
+                                                auto_threshold_buttons_separation;
+                                                
+                GLfloat right = left + auto_threshold_buttons_width;
+                GLfloat horizontal_center = (left + right)/ 2.0;
+                GLfloat top = view_height - auto_threshold_buttons_edge_offset;
+                GLfloat bottom = top - auto_threshold_buttons_height; 
+                
+                glBegin(GL_TRIANGLES);
+                glVertex2f( left, bottom );
+                glVertex2f( right, bottom );
+                glVertex2f( horizontal_center, top );
+                glEnd();
+                
+                auto_threshold_up_region->setRegion(left, bottom,
+                                                    auto_threshold_buttons_width,
+                                                    auto_threshold_buttons_height);
+                
+                
+                
+                // the "down" button
+                left = right + auto_threshold_buttons_separation;
+                right = left + auto_threshold_buttons_width;
+                horizontal_center = (left + right)/ 2.0;
+
+                glBegin(GL_TRIANGLES);
+                glVertex2f( right, top );
+                glVertex2f( horizontal_center, bottom );
+                glVertex2f( left, top );
+                glEnd();
+                
+                auto_threshold_down_region->setRegion(left, bottom,
+                                                    auto_threshold_buttons_width,
+                                                    auto_threshold_buttons_height);
+                
             }
             
             // draw the range bars; assumes we're in a whole-view viewport

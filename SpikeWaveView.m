@@ -119,6 +119,7 @@
             case SP_TIME_MIN_SELECT:
                 old_adjust_value = renderer->getTimeRangeMin();
                 break;
+
             default:
                 break;
         }
@@ -225,7 +226,7 @@
 - (void)mouseUp:(NSEvent *)theEvent {
     
     //NSLog(@"mouse up");
-    
+     
     [self exitAdjustMode:adjust_mode];
     adjust_mode = -1;
     

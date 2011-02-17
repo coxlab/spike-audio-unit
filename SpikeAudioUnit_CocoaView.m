@@ -208,6 +208,19 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 }
 
 
+- (void) autothresholdUp {
+    NSLog(@"Autothresholding");
+    NSAssert(	AUParameterSet(mParameterListener, self, &mParameter[kAutoThresholdHighParam], true, 0) == noErr,
+             @"[SpikeAudioUnit_CocoaView iaTriggerThresholdChanged:] AUParameterSet()");    
+}
+
+
+- (void) autothresholdDown {
+    NSLog(@"Autothresholding");
+    NSAssert(	AUParameterSet(mParameterListener, self, &mParameter[kAutoThresholdLowParam], true, 0) == noErr,
+             @"[SpikeAudioUnit_CocoaView iaTriggerThresholdChanged:] AUParameterSet()");    
+}
+
 - (void) setTriggerThresholdSilent:(Float32)value {
     [super setTriggerThreshold:value];
 }
@@ -304,6 +317,12 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 		event.mArgument.mParameter = mParameter[kMaxAmplitudeViewParam];
     } else if(mode == SP_TIME_MIN_SELECT){
 		event.mArgument.mParameter = mParameter[kMinTimeViewParam];
+    } else if(mode == SP_AUTOTHRESH_UP_SELECT){
+        [self autothresholdUp];
+        event.mArgument.mParameter = mParameter[kAutoThresholdHighParam];
+    } else if(mode == SP_AUTOTHRESH_DOWN_SELECT){
+        [self autothresholdDown];
+        event.mArgument.mParameter = mParameter[kAutoThresholdLowParam];
     } else {
 		event.mArgument.mParameter = mParameter[kMaxTimeViewParam];
     }		
@@ -390,8 +409,11 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 - (void)_parameterListener:(void *)inObject parameter:(const AudioUnitParameter *)inParameter value:(Float32)inValue {
     //inObject ignored in this case.
     
+    NSLog(@"notified of change: %d", *inParameter);
+    
 	switch (inParameter->mParameterID) {
 		case kThresholdParam:
+
             [self setTriggerThresholdSilent:inValue];
             break;
         case kMinAmplitudeViewParam:
