@@ -346,7 +346,7 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
     #define AUTOTHRESHOLD_NSAMPLES  44100
     
     // arm the autothresholding mechanism
-    if(autothreshold_high || autothreshold_low){
+    if(!autothresholding_armed && (autothreshold_high || autothreshold_low)){
         autothresholding_armed = true;
         autothresholding_count = AUTOTHRESHOLD_NSAMPLES;
         n_autothreshold_samples = 0;
@@ -356,9 +356,9 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
         
         if(autothreshold_low){
             crest_factor *= -1;
-            setGlobalParameter(kAutoThresholdLowParam, false);
+            //setGlobalParameter(kAutoThresholdLowParam, false);
         } else {
-            setGlobalParameter(kAutoThresholdHighParam, false);
+            //setGlobalParameter(kAutoThresholdHighParam, false);
         }
         
     }

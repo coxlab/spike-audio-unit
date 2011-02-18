@@ -27,6 +27,7 @@
 #define SP_AUTOTHRESH_UP_SELECT 6
 #define SP_AUTOTHRESH_DOWN_SELECT 7
 
+
 namespace spike_visualization {
     
     // Note: we use GLfloat's everywhere here since the contained classes are 
@@ -44,6 +45,12 @@ namespace spike_visualization {
             
     } SpikeWaveSelectionAction;
 
+
+    enum AutoThresholdState {
+        AUTO_THRESHOLD_OFF,
+        AUTO_THRESHOLD_HIGH,
+        AUTO_THRESHOLD_LOW
+    };
 
     class HitTestRegion {
         
@@ -138,8 +145,11 @@ namespace spike_visualization {
             float range_frame_font_size;
             float label_scale_factor;
             
-            
+            // The trigger threshold (in V)
             GLfloat threshold;
+            
+            // Autothresholding state
+            AutoThresholdState auto_thresholding;
             
             // time of the first spike wave data point
             GLfloat spike_wave_time_offset;
@@ -178,7 +188,9 @@ namespace spike_visualization {
                           GLfloat _max_ampl,
                           GLfloat _min_time,
                           GLfloat _max_time){
-                          
+                
+                auto_thresholding = AUTO_THRESHOLD_OFF;
+                                              
                 units_per_volt = 1;
                 n_window_sets = _n_window_sets;
                 n_windows_per_set = _n_windows_per_set;
@@ -273,6 +285,14 @@ namespace spike_visualization {
                 return false;
             }
             
+            
+            void setAutoThresholdState(AutoThresholdState _state){
+                auto_thresholding = _state;
+            }
+            
+            AutoThresholdState getAutoThresholdState(){
+                return auto_thresholding;
+            }
             
             void pushSpikeWave(shared_ptr<GLSpikeWave> spike_wave){
                                 
@@ -512,7 +532,11 @@ namespace spike_visualization {
             
             void renderAutoThresholdButtons(){
             
-                glColor3f(0.6, 0.0, 0.0);
+                if(auto_thresholding == AUTO_THRESHOLD_HIGH){
+                    glColor3f(0.6, 0.0, 0.0);
+                } else {
+                    glColor3f(0.4, 0.4, 0.4);
+                }
                 
                 // the "up" button
                 GLfloat left = view_width - 2. * auto_threshold_buttons_width - 
@@ -535,6 +559,12 @@ namespace spike_visualization {
                                                     auto_threshold_buttons_height);
                 
                 
+                
+                if(auto_thresholding == AUTO_THRESHOLD_LOW){
+                    glColor3f(0.6, 0.0, 0.0);
+                } else {
+                    glColor3f(0.4, 0.4, 0.4);
+                }
                 
                 // the "down" button
                 left = right + auto_threshold_buttons_separation;

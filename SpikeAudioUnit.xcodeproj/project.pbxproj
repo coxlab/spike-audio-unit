@@ -568,6 +568,7 @@
 			isa = PBXProject;
 			buildConfigurationList = 3E0BED060898391C00E1F0F7 /* Build configuration list for PBXProject "SpikeAudioUnit" */;
 			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,

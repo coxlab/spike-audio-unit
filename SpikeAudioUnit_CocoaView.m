@@ -209,17 +209,52 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 
 
 - (void) autothresholdUp {
-    NSLog(@"Autothresholding");
+    
+    int current = renderer->getAutoThresholdState();
+    
+    if(current == AUTO_THRESHOLD_HIGH){
+        NSAssert(	AUParameterSet(mParameterListener, self, &mParameter[kAutoThresholdHighParam], false, 0) == noErr,
+                 @"[SpikeAudioUnit_CocoaView iaTriggerThresholdChanged:] AUParameterSet()");
+        renderer->setAutoThresholdState(AUTO_THRESHOLD_OFF);
+        return;
+    }
+    
+    
+    if(current == AUTO_THRESHOLD_LOW){
+        NSAssert(	AUParameterSet(mParameterListener, self, &mParameter[kAutoThresholdLowParam], false, 0) == noErr,
+                 @"[SpikeAudioUnit_CocoaView iaTriggerThresholdChanged:] AUParameterSet()");
+    }
+
     NSAssert(	AUParameterSet(mParameterListener, self, &mParameter[kAutoThresholdHighParam], true, 0) == noErr,
-             @"[SpikeAudioUnit_CocoaView iaTriggerThresholdChanged:] AUParameterSet()");    
+             @"[SpikeAudioUnit_CocoaView iaTriggerThresholdChanged:] AUParameterSet()"); 
+    renderer->setAutoThresholdState(AUTO_THRESHOLD_HIGH);
+    
 }
 
 
 - (void) autothresholdDown {
-    NSLog(@"Autothresholding");
+    
+    int current = renderer->getAutoThresholdState();
+    
+    if(current == AUTO_THRESHOLD_LOW){
+        NSAssert(	AUParameterSet(mParameterListener, self, &mParameter[kAutoThresholdLowParam], false, 0) == noErr,
+                 @"[SpikeAudioUnit_CocoaView iaTriggerThresholdChanged:] AUParameterSet()"); 
+        renderer->setAutoThresholdState(AUTO_THRESHOLD_OFF);
+        return;
+    }
+    
+    
+    if(current == AUTO_THRESHOLD_LOW){
+        NSAssert(	AUParameterSet(mParameterListener, self, &mParameter[kAutoThresholdHighParam], false, 0) == noErr,
+                 @"[SpikeAudioUnit_CocoaView iaTriggerThresholdChanged:] AUParameterSet()");
+    }
+    
     NSAssert(	AUParameterSet(mParameterListener, self, &mParameter[kAutoThresholdLowParam], true, 0) == noErr,
-             @"[SpikeAudioUnit_CocoaView iaTriggerThresholdChanged:] AUParameterSet()");    
+             @"[SpikeAudioUnit_CocoaView iaTriggerThresholdChanged:] AUParameterSet()"); 
+    renderer->setAutoThresholdState(AUTO_THRESHOLD_LOW);
 }
+
+
 
 - (void) setTriggerThresholdSilent:(Float32)value {
     [super setTriggerThreshold:value];
@@ -439,7 +474,12 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
         case kGainParam:
             renderer->setAmplifierGain(inValue);
             break;
-            
+        case kAutoThresholdLowParam:
+            if(inValue) renderer->setAutoThresholdState(AUTO_THRESHOLD_LOW);
+            break;
+        case kAutoThresholdHighParam:
+            if(inValue) renderer->setAutoThresholdState(AUTO_THRESHOLD_HIGH);
+            break;
 	}
 }
 
