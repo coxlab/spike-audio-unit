@@ -188,12 +188,21 @@ public:
                 
                 //mAudioUnit->Globals()->SetParameter(param_id, val);
                 
-                AudioUnitParameter param;
-                param.mAudioUnit = mAudioUnit->GetComponentInstance();
-                param.mScope = kAudioUnitScope_Global;
-                param.mParameterID = param_id;
+                //AudioUnitParameter param;
+//                param.mAudioUnit = mAudioUnit->GetComponentInstance();
+//                param.mScope = kAudioUnitScope_Global;
+//                param.mParameterID = param_id;
+//                
+//                AUParameterListenerNotify(NULL, NULL, &param);
+                AudioUnitEvent myEvent;
                 
-                AUParameterListenerNotify(NULL, NULL, &param);
+                myEvent.mEventType = kAudioUnitEvent_ParameterValueChange;
+                myEvent.mArgument.mParameter.mAudioUnit = mAudioUnit->GetComponentInstance();
+                myEvent.mArgument.mParameter.mParameterID = param_id;
+                myEvent.mArgument.mParameter.mScope = kAudioUnitScope_Global;
+                myEvent.mArgument.mParameter.mElement = 0;
+                
+                AUEventListenerNotify(NULL, NULL, &myEvent);
             }
             
                         
