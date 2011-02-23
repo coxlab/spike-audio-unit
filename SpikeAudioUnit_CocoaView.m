@@ -244,7 +244,7 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
     }
     
     
-    if(current == AUTO_THRESHOLD_LOW){
+    if(current == AUTO_THRESHOLD_HIGH){
         NSAssert(	AUParameterSet(mParameterListener, self, &mParameter[kAutoThresholdHighParam], false, 0) == noErr,
                  @"[SpikeAudioUnit_CocoaView iaTriggerThresholdChanged:] AUParameterSet()");
     }
