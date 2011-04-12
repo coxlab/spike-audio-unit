@@ -331,17 +331,19 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
 
     
     int fresh_spikes = 0;
-    static int frames_since_last_update = 0;
-    static float crest_factor = 0.0; 
-    static float sample_sum = 0.0;
-    static float sample_sumsq = 0.0;
-    static int autothresholding_count = 0;
     
-    static bool autothresholding_armed = false;
+//    static int frames_since_last_update = 0;
+//    static float crest_factor = 0.0; 
+//    static float sample_sum = 0.0;
+//    static float sample_sumsq = 0.0;
+//    static int autothresholding_count = 0;
+//    static bool autothresholding_armed = false;
+//    static int n_autothreshold_samples = 0;
+    
     
     bool autothreshold_high = GetParameter(kAutoThresholdHighParam);
     bool autothreshold_low = GetParameter(kAutoThresholdLowParam);
-    static int n_autothreshold_samples = 0;
+    
     
     #define AUTOTHRESHOLD_NSAMPLES  44100
     

@@ -138,10 +138,28 @@ public:
 
     class SpikeAudioUnitKernel : public AUKernelBase		// most real work happens here
 	{  
+        
+        private:
+            int frames_since_last_update;
+            float crest_factor; 
+            float sample_sum;
+            float sample_sumsq;
+            int autothresholding_count;
+            bool autothresholding_armed;
+            int n_autothreshold_samples;
+            
         public:
             SpikeAudioUnitKernel(AUEffectBase *inAudioUnit ): AUKernelBase(inAudioUnit),
                                                               message_ctx(1){ 
                 
+                frames_since_last_update = 0;
+                crest_factor = 0.0; 
+                sample_sum = 0.0;
+                sample_sumsq = 0.0;
+                autothresholding_count = 0;
+                autothresholding_armed = false;
+                n_autothreshold_samples = 0;
+                                                                  
                 //midi_endpoint = shared_ptr<MIDIEndpoint>(new MIDIEndpoint("midi_spikes", "default_port", "spike_source"));
                 
                 capture_buffer.Allocate(1, sizeof(Float32), DEFAULT_BUFFER_SIZE);//2048);

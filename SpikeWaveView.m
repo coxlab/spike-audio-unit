@@ -97,6 +97,7 @@
     NSPoint pt = [self convertPoint:[theEvent locationInWindow] fromView:nil];
     
     SpikeWaveSelectionAction action;
+    renderer->hitTest(pt.x, pt.y, &action);
     
     //NSLog(@"mouse down: %g, %g", pt.x, pt.y);
     
@@ -146,8 +147,8 @@
     float gain = 1;
     
     //NSLog(@"data y: %f", data_y);
-    renderer->setAmplitudeRangeMax(current_max + gain * data_y);
-    renderer->setAmplitudeRangeMin(current_min - gain * data_y);
+    [self setAmplitudeRangeMax: current_max + gain * data_y];
+    [self setAmplitudeRangeMin:current_min - gain * data_y];
      
 }
 
