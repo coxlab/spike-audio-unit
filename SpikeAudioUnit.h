@@ -81,7 +81,7 @@ static const float kDefaultValue_GainParam = 1.0;
 static const float kDefaultValue_UnitsPerVoltParam = 1.0;
 static const float kDefaultValue_AutoThresholdHighParam = 0.0;
 static const float kDefaultValue_AutoThresholdLowParam = 0.0;
-static const float kDefaultValue_AutoThresholdFactorParam = 3.0;
+static const float kDefaultValue_AutoThresholdFactorParam = 4.0;
 
 static CFStringRef kThresholdParamName = CFSTR("Trigger Threshold");
 static CFStringRef kMinAmplitudeViewParamName = CFSTR("Min Amplitude");

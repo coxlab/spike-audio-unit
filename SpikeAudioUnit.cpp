@@ -408,8 +408,8 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
             if(new_thresh < 0.0){
                 dir = -1.0;
             }
-            setGlobalParameter(kMaxAmplitudeViewParam, dir * new_thresh * 1.2);
-            setGlobalParameter(kMinAmplitudeViewParam, dir * new_thresh * -1.2);
+            setGlobalParameter(kMaxAmplitudeViewParam, dir * new_thresh * 2.);//1.2);
+            setGlobalParameter(kMinAmplitudeViewParam, dir * new_thresh * -2.);//-1.2);
             std::cerr << "set threshold to: " << new_thresh << std::endl;
         }
         
@@ -428,7 +428,7 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
             
             // copy the spike wave into a protocol buffer object
             SpikeWaveBuffer wave;
-            wave.set_channel_id(51);
+            wave.set_channel_id(channel_id);
             wave.set_time_stamp(frame_number);
             
             if(buffer_list->mBuffers[0].mData == NULL){
