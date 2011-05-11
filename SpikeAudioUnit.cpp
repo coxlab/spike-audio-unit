@@ -410,7 +410,7 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
             }
             setGlobalParameter(kMaxAmplitudeViewParam, dir * new_thresh * 2.);//1.2);
             setGlobalParameter(kMinAmplitudeViewParam, dir * new_thresh * -2.);//-1.2);
-            std::cerr << "set threshold to: " << new_thresh << std::endl;
+            //std::cerr << "set threshold to: " << new_thresh << std::endl;
         }
         
         if(pending_trigger > 0){  // trigger is pending
@@ -456,7 +456,7 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
             fresh_spikes++;
             
             if(frame_number % 1000 == 0){
-                std::cerr << channel_id << std::endl;
+                //std::cerr << channel_id << std::endl;
             }
             
             
