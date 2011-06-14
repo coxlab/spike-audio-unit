@@ -251,10 +251,13 @@ public:
             CABufferList *input_buffer_list;
             CABufferList *capture_buffer_list;
             
-            shared_ptr<MIDIEndpoint> midi_endpoint; 
+            //shared_ptr<MIDIEndpoint> midi_endpoint; 
             
             zmq::context_t message_ctx;
             shared_ptr<zmq::socket_t> message_socket;
+            
+            shared_ptr<zmq::socket_t> ctl_receive_socket;
+            shared_ptr<zmq::socket_t> ctl_send_socket;
         
             int channel_id;
         
@@ -290,6 +293,62 @@ public:
                 } catch (zmq::error_t& e) {
                     std::cerr << "ZMQ: " << e.what() << std::endl;
                 }
+            }
+            
+            
+            void connectControlSockets(int channel_id){
+                
+                // Create send and receive sockets
+                ctl_receive_socket = shared_ptr<zmq::socket_t>(new zmq::socket_t(message_ctx, ZMQ_SUB));
+                ctl_send_socket = shared_ptr<zmq::socket_t>(new zmq::socket_t(message_ctx, ZMQ_PUB));
+                
+                uint64_t hwm = 1000;
+                ctl_receive_socket->setsockopt(ZMQ_HWM, &hwm, sizeof(uint64_t));
+                ctl_send_socket->setsockopt(ZMQ_HWM, &hwm, sizeof(uint64_t));                
+                
+                // subscribe to all messages on receive
+                ctl_receive_socket->setsockopt(ZMQ_SUBSCRIBE, NULL, 0);
+                
+                // construct the url
+                ostringstream receive_filename_stream, send_filename_stream, receive_url_stream, send_url_stream;
+                
+                // hacky filesystem manipulation
+                receive_filename_stream << "/tmp/spike_channels/ctl";
+                
+                string mkdir_command("mkdir -p ");
+                mkdir_command.append(receive_filename_stream.str());
+                system(mkdir_command.c_str());
+                
+                send_filename_stream << receive_filename_stream.str();
+                
+                receive_filename_stream << "/in/" << channel_id;
+                send_filename_stream << "/out/" << channel_id;
+                string touch_command("touch ");
+                touch_command.append(send_filename_stream.str());
+                system(touch_command.c_str());
+                
+                touch_command = "touch ";
+                touch_command.append(receive_filename_stream.str());
+                system(touch_command.c_str());
+                
+                receive_url_stream << "ipc://" << receive_filename_stream.str();
+                try {
+                    ctl_receive_socket->bind(receive_url_stream.str().c_str());
+                    std::cerr << "ZMQ ctl client bound successfully to " << receive_url_stream.str() << std::endl;
+                } catch (zmq::error_t& e) {
+                    std::cerr << "ZMQ (ctl receive): " << e.what() << std::endl;
+                }
+                
+                send_url_stream << "ipc://" << send_filename_stream.str();
+                receive_url_stream << "ipc://" << receive_filename_stream.str();
+                try {
+                    ctl_receive_socket->bind(send_url_stream.str().c_str());
+                    std::cerr << "ZMQ ctl server bound successfully to " << send_url_stream.str() << std::endl;
+                } catch (zmq::error_t& e) {
+                    std::cerr << "ZMQ (ctl send): " << e.what() << std::endl;
+                }
+
+                
             }
         
         

@@ -163,6 +163,7 @@
 		3E0BECF80898391C00E1F0F7 /* CAVectorUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CAVectorUnit.cpp; sourceTree = "<group>"; };
 		3E0BECF90898391C00E1F0F7 /* CAVectorUnit.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CAVectorUnit.h; sourceTree = "<group>"; };
 		3E0BECFA0898391C00E1F0F7 /* CAVectorUnitTypes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CAVectorUnitTypes.h; sourceTree = "<group>"; };
+		5C64452E13A7F9BA0056AA53 /* ctl_message.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ctl_message.proto; sourceTree = "<group>"; };
 		5CC630EB11C81272000AB17E /* MIDIEndpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIEndpoint.h; sourceTree = "<group>"; };
 		5CC630EC11C81272000AB17E /* MIDIEndpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MIDIEndpoint.cpp; sourceTree = "<group>"; };
 		5CC630F111C817D4000AB17E /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
@@ -333,6 +334,7 @@
 				5CD6A53E122B21CE0090BF78 /* spike_wave.pb.h */,
 				5CC6334011C9A6E7000AB17E /* SharedTypes.h */,
 				5CD6A51A122B1F680090BF78 /* spike_wave.proto */,
+				5C64452E13A7F9BA0056AA53 /* ctl_message.proto */,
 			);
 			name = Shared;
 			sourceTree = "<group>";
@@ -643,7 +645,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# shell script goes here\necho ${SRCROOT}\nrm -f ${SRCROOT}/spike_wave.pb.*\ncd ${SRCROOT}\n/usr/local/bin/protoc --proto_path=./ --cpp_out=./ spike_wave.proto\nexit 0";
+			shellScript = "# shell script goes here\necho ${SRCROOT}\nrm -f ${SRCROOT}/spike_wave.pb.*\nrm -f ${SRCROOT}/ctl_message.pb.*\ncd ${SRCROOT}\n/usr/local/bin/protoc --proto_path=./ --cpp_out=./ spike_wave.proto\n/usr/local/bin/protoc --proto_path=./ --cpp_out=./ ctl_message.proto\nexit 0";
 		};
 		687C66CF122C306F007D82E2 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;

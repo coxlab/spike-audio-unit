@@ -322,6 +322,7 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
     if(current_channel_id != channel_id){
         channel_id = current_channel_id;
         connectChannelSocket(channel_id); 
+        connectControlSockets(channel_id); 
     }
     
     // always put the data in the ring buffer
