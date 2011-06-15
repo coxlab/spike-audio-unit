@@ -53,8 +53,8 @@
 		5CC6338611CA37FD000AB17E /* CocoaGLString.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC6337A11CA37FD000AB17E /* CocoaGLString.h */; };
 		5CC6338711CA37FD000AB17E /* CocoaGLString.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CC6337B11CA37FD000AB17E /* CocoaGLString.m */; };
 		5CC6338811CA37FD000AB17E /* CocoaGLStringRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC6337C11CA37FD000AB17E /* CocoaGLStringRenderer.cpp */; };
-		5CC6338911CA37FD000AB17E /* CocoaGLStringRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC6337D11CA37FD000AB17E /* CocoaGLStringRenderer.h */; };
-		5CC6338A11CA37FD000AB17E /* GLStringRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC6337E11CA37FD000AB17E /* GLStringRenderer.cpp */; };
+		5CC6338911CA37FD000AB17E /* GLStringRenderer.cpp in Headers */ = {isa = PBXBuildFile; fileRef = 5CC6337D11CA37FD000AB17E /* GLStringRenderer.cpp */; };
+		5CC6338A11CA37FD000AB17E /* CocoaGLStringRenderer.h in Sources */ = {isa = PBXBuildFile; fileRef = 5CC6337E11CA37FD000AB17E /* CocoaGLStringRenderer.h */; };
 		5CC6338B11CA37FD000AB17E /* GLStringRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC6337F11CA37FD000AB17E /* GLStringRenderer.h */; };
 		5CC6339211CA3A3A000AB17E /* SpikeRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC6338C11CA3A3A000AB17E /* SpikeRenderer.cpp */; };
 		5CC6339311CA3A3A000AB17E /* SpikeRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC6338D11CA3A3A000AB17E /* SpikeRenderer.h */; };
@@ -182,9 +182,9 @@
 		5CC6337A11CA37FD000AB17E /* CocoaGLString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CocoaGLString.h; sourceTree = "<group>"; };
 		5CC6337B11CA37FD000AB17E /* CocoaGLString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CocoaGLString.m; sourceTree = "<group>"; };
 		5CC6337C11CA37FD000AB17E /* CocoaGLStringRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CocoaGLStringRenderer.cpp; sourceTree = "<group>"; };
-		5CC6337D11CA37FD000AB17E /* CocoaGLStringRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CocoaGLStringRenderer.h; sourceTree = "<group>"; };
-		5CC6337E11CA37FD000AB17E /* GLStringRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GLStringRenderer.cpp; sourceTree = "<group>"; };
-		5CC6337F11CA37FD000AB17E /* GLStringRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLStringRenderer.h; sourceTree = "<group>"; };
+		5CC6337D11CA37FD000AB17E /* GLStringRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLStringRenderer.cpp; path = "spike-visualization/GLStringRenderer.cpp"; sourceTree = "<group>"; };
+		5CC6337E11CA37FD000AB17E /* CocoaGLStringRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CocoaGLStringRenderer.h; sourceTree = "<group>"; };
+		5CC6337F11CA37FD000AB17E /* GLStringRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLStringRenderer.h; path = "spike-visualization/GLStringRenderer.h"; sourceTree = "<group>"; };
 		5CC6338C11CA3A3A000AB17E /* SpikeRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpikeRenderer.cpp; path = "spike-visualization/SpikeRenderer.cpp"; sourceTree = "<group>"; };
 		5CC6338D11CA3A3A000AB17E /* SpikeRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpikeRenderer.h; path = "spike-visualization/SpikeRenderer.h"; sourceTree = "<group>"; };
 		5CC6338E11CA3A3A000AB17E /* SpikeWave.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpikeWave.cpp; path = "spike-visualization/SpikeWave.cpp"; sourceTree = "<group>"; };
@@ -359,8 +359,8 @@
 				5CC6337A11CA37FD000AB17E /* CocoaGLString.h */,
 				5CC6337B11CA37FD000AB17E /* CocoaGLString.m */,
 				5CC6337C11CA37FD000AB17E /* CocoaGLStringRenderer.cpp */,
-				5CC6337D11CA37FD000AB17E /* CocoaGLStringRenderer.h */,
-				5CC6337E11CA37FD000AB17E /* GLStringRenderer.cpp */,
+				5CC6337E11CA37FD000AB17E /* CocoaGLStringRenderer.h */,
+				5CC6337D11CA37FD000AB17E /* GLStringRenderer.cpp */,
 				5CC6337F11CA37FD000AB17E /* GLStringRenderer.h */,
 			);
 			name = SpikeUI;
@@ -482,7 +482,7 @@
 				8BA4AE55073EB72300A2709A /* SpikeAudioUnit_CocoaView.h in Headers */,
 				5CC6334211C9A6E7000AB17E /* SharedTypes.h in Headers */,
 				5CC6338611CA37FD000AB17E /* CocoaGLString.h in Headers */,
-				5CC6338911CA37FD000AB17E /* CocoaGLStringRenderer.h in Headers */,
+				5CC6338911CA37FD000AB17E /* GLStringRenderer.cpp in Headers */,
 				5CC6338B11CA37FD000AB17E /* GLStringRenderer.h in Headers */,
 				5CC6339311CA3A3A000AB17E /* SpikeRenderer.h in Headers */,
 				5CC6339511CA3A3A000AB17E /* SpikeWave.h in Headers */,
@@ -681,7 +681,7 @@
 				8BA4AE57073EB73300A2709A /* SpikeAudioUnit_CocoaView.m in Sources */,
 				5CC6338711CA37FD000AB17E /* CocoaGLString.m in Sources */,
 				5CC6338811CA37FD000AB17E /* CocoaGLStringRenderer.cpp in Sources */,
-				5CC6338A11CA37FD000AB17E /* GLStringRenderer.cpp in Sources */,
+				5CC6338A11CA37FD000AB17E /* CocoaGLStringRenderer.h in Sources */,
 				5CC6339211CA3A3A000AB17E /* SpikeRenderer.cpp in Sources */,
 				5CC6339411CA3A3A000AB17E /* SpikeWave.cpp in Sources */,
 				5CC6339711CA3A3A000AB17E /* SpikeWaveView.m in Sources */,
