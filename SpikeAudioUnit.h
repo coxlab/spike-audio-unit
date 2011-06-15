@@ -54,6 +54,10 @@
 #include <iostream>
 #include <sstream>
 
+#include "spike_wave.pb.h"
+#include "ctl_message.pb.h"
+
+
 using namespace boost;
 
 #define DEFAULT_BUFFER_SIZE     44100
@@ -81,7 +85,7 @@ static const float kDefaultValue_GainParam = 1.0;
 static const float kDefaultValue_UnitsPerVoltParam = 1.0;
 static const float kDefaultValue_AutoThresholdHighParam = 0.0;
 static const float kDefaultValue_AutoThresholdLowParam = 0.0;
-static const float kDefaultValue_AutoThresholdFactorParam = 4.0;
+static const float kDefaultValue_AutoThresholdFactorParam = 5.0;
 
 static CFStringRef kThresholdParamName = CFSTR("Trigger Threshold");
 static CFStringRef kMinAmplitudeViewParamName = CFSTR("Min Amplitude");
@@ -160,7 +164,6 @@ public:
                 autothresholding_armed = false;
                 n_autothreshold_samples = 0;
                                                                   
-                //midi_endpoint = shared_ptr<MIDIEndpoint>(new MIDIEndpoint("midi_spikes", "default_port", "spike_source"));
                 
                 capture_buffer.Allocate(1, sizeof(Float32), DEFAULT_BUFFER_SIZE);//2048);
                 
@@ -187,6 +190,7 @@ public:
                                                                   
                 
                 connectChannelSocket(channel_id);
+                connectControlSockets(channel_id);
                 
             }
 		
@@ -204,14 +208,6 @@ public:
             void setGlobalParameter(AudioUnitParameterID param_id, AudioUnitParameterValue val){
                 mAudioUnit->SetParameter(param_id, val);
                 
-                //mAudioUnit->Globals()->SetParameter(param_id, val);
-                
-                //AudioUnitParameter param;
-//                param.mAudioUnit = mAudioUnit->GetComponentInstance();
-//                param.mScope = kAudioUnitScope_Global;
-//                param.mParameterID = param_id;
-//                
-//                AUParameterListenerNotify(NULL, NULL, &param);
                 AudioUnitEvent myEvent;
                 
                 myEvent.mEventType = kAudioUnitEvent_ParameterValueChange;
@@ -221,6 +217,60 @@ public:
                 myEvent.mArgument.mParameter.mElement = 0;
                 
                 AUEventListenerNotify(NULL, NULL, &myEvent);
+                
+            }
+            
+            
+            void sendCtlMessage(long frame_number, int param, double value){
+                
+                CtlMessage ctl_msg;
+                ctl_msg.set_channel_id(channel_id);
+                ctl_msg.set_time_stamp(frame_number);
+
+                if(param = kThresholdParam){
+                    ctl_msg.set_message_type(CtlMessage::THRESHOLD);
+                }
+                ctl_msg.set_value(value);
+                
+                string serialized;
+
+                ctl_msg.SerializeToString(&serialized);
+                zmq::message_t msg(serialized.length());
+                memcpy(msg.data(), serialized.c_str(), serialized.length());
+                bool rc = ctl_send_socket->send(msg);
+            }
+            
+            
+            void checkCtlMessages(){
+            
+                // read from incoming ctl sockets
+                bool msg_received;
+                zmq::message_t msg;
+                
+                
+                // Receive a message 
+                msg_received = ctl_receive_socket->recv(&msg, ZMQ_NOBLOCK);
+                
+                
+                while(msg_received){
+
+                    string data((const char *)msg.data(), msg.size());
+                    CtlMessage ctl_msg;
+                    ctl_msg.ParseFromString(data);
+                    
+                    // use setGlobalParameter as needed to update the global AU state
+                    switch(ctl_msg.message_type()){
+                    
+                        case CtlMessage::THRESHOLD:
+                            double new_thresh = ctl_msg.value();
+                            setGlobalParameter(kThresholdParam, new_thresh);
+                            break;
+                    
+                    }
+
+                    
+                    msg_received = ctl_receive_socket->recv(&msg, ZMQ_NOBLOCK);
+                }
             }
             
                         
@@ -314,15 +364,21 @@ public:
                 
                 // hacky filesystem manipulation
                 receive_filename_stream << "/tmp/spike_channels/ctl";
-                
-                string mkdir_command("mkdir -p ");
-                mkdir_command.append(receive_filename_stream.str());
-                system(mkdir_command.c_str());
-                
                 send_filename_stream << receive_filename_stream.str();
                 
                 receive_filename_stream << "/in/" << channel_id;
                 send_filename_stream << "/out/" << channel_id;
+                
+                string mkdir_command("mkdir -p ");
+                mkdir_command.append(receive_filename_stream.str());
+                system(mkdir_command.c_str());
+
+                mkdir_command = "mkdir -p ";
+                mkdir_command.append(send_filename_stream.str());
+                system(mkdir_command.c_str());
+                
+                
+                
                 string touch_command("touch ");
                 touch_command.append(send_filename_stream.str());
                 system(touch_command.c_str());
@@ -331,18 +387,19 @@ public:
                 touch_command.append(receive_filename_stream.str());
                 system(touch_command.c_str());
                 
+                // connect receive socket
                 receive_url_stream << "ipc://" << receive_filename_stream.str();
                 try {
-                    ctl_receive_socket->bind(receive_url_stream.str().c_str());
+                    ctl_receive_socket->connect(receive_url_stream.str().c_str());
                     std::cerr << "ZMQ ctl client bound successfully to " << receive_url_stream.str() << std::endl;
                 } catch (zmq::error_t& e) {
                     std::cerr << "ZMQ (ctl receive): " << e.what() << std::endl;
                 }
                 
+                // bind send socket
                 send_url_stream << "ipc://" << send_filename_stream.str();
-                receive_url_stream << "ipc://" << receive_filename_stream.str();
                 try {
-                    ctl_receive_socket->bind(send_url_stream.str().c_str());
+                    ctl_send_socket->bind(send_url_stream.str().c_str());
                     std::cerr << "ZMQ ctl server bound successfully to " << send_url_stream.str() << std::endl;
                 } catch (zmq::error_t& e) {
                     std::cerr << "ZMQ (ctl send): " << e.what() << std::endl;

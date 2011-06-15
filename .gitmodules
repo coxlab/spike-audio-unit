@@ -1,0 +1,3 @@
+[submodule "spike-visualization"]
+	path = spike-visualization
+	url = git@github.com:coxlab/spike-visualization

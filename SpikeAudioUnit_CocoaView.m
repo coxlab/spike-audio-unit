@@ -42,6 +42,7 @@
 
 #import "SpikeAudioUnit_CocoaView.h"
 #include "spike_wave.pb.h"
+#include "ctl_message.pb.h"
 #include <string>
 #include <sstream>
 
@@ -108,7 +109,7 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
     
 
     message_context = zmq_init(1);
-    //[self connectToChannel:channel_id];    
+
     // setup the timer 
     [self setTimer: [NSTimer scheduledTimerWithTimeInterval: (1.0/20.0)
                                                      target: self
@@ -130,7 +131,6 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
                                                     repeats: YES]];	
     }
     
-    //[self connectToChannel:channel_id];
 }
 
 
@@ -138,7 +138,6 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 {
 	[capture_timer invalidate];
     capture_timer = Nil;
-	//[[NSNotificationCenter defaultCenter] removeObserver: self];
     
 	[super removeFromSuperview];
 }
@@ -156,23 +155,13 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
     // Receive a message 
     rc = zmq_recv (message_socket, &msg, ZMQ_NOBLOCK);
     
-//    if(rc == -1){
-//        std::cerr << zmq_strerror(zmq_errno()) << std::endl;
-//    } else {
-//        std::cerr << "got it" << std::endl;
-//    }
     
     while(rc == 0){
-        //std::cerr << "RECV" << std::endl;
 
         string data((const char *)zmq_msg_data(&msg), zmq_msg_size(&msg));
         SpikeWaveBuffer wave;
         wave.ParseFromString(data);
         
-        if(wave.wave_sample_size() != PRE_TRIGGER+POST_TRIGGER){
-//            std::cerr << "wrong wave sample size: " << wave.wave_sample_size() << std::endl;
-//            continue;
-        }
         
         Float32 data_buffer[PRE_TRIGGER+POST_TRIGGER];
         
@@ -215,7 +204,9 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
     if(current == AUTO_THRESHOLD_HIGH){
         NSAssert(	AUParameterSet(mParameterListener, self, &mParameter[kAutoThresholdHighParam], false, 0) == noErr,
                  @"[SpikeAudioUnit_CocoaView iaTriggerThresholdChanged:] AUParameterSet()");
+                 
         renderer->setAutoThresholdState(AUTO_THRESHOLD_OFF);
+
         return;
     }
     
@@ -265,7 +256,6 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
     //NSLog(@"setting threshold...");
     NSAssert(	AUParameterSet(mParameterListener, self, &mParameter[kThresholdParam], (Float32)value, 0) == noErr,
              @"[SpikeAudioUnit_CocoaView iaTriggerThresholdChanged:] AUParameterSet()");
-
     [super setTriggerThreshold:value];
 }
 
@@ -298,18 +288,6 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 }
 
 
-
-#pragma mark ____ INTERFACE ACTIONS ____
-- (IBAction)iaParam1Changed:(id)sender {
-    float floatValue = [sender floatValue];
-	NSAssert(	AUParameterSet(mParameterListener, sender, &mParameter[0], (Float32)floatValue, 0) == noErr,
-                @"[SpikeAudioUnit_CocoaView iaParam1Changed:] AUParameterSet()");
-    if (sender == uiParam1Slider) {
-        [uiParam1TextField setFloatValue:floatValue];
-    } else {
-        [uiParam1Slider setFloatValue:floatValue];
-    }
-}
 
 #pragma mark ____ NOTIFICATIONS ____
 
@@ -367,29 +345,6 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 }
 
 
-// This routine is called when the user has clicked on the slider. We need to send a begin parameter change gesture to alert hosts that the parameter may be changing value
--(void) handleMouseDown: (NSNotification *) aNotification {
-	if ([aNotification object] == uiParam1Slider) {
-		AudioUnitEvent event;
-		event.mArgument.mParameter = mParameter[0];
-		event.mEventType = kAudioUnitEvent_BeginParameterChangeGesture;
-		
-		AUEventListenerNotify (NULL, self, &event);		// NOTE, if you have an AUEventListenerRef because you are listening to event notification, 
-														// pass that as the first argument to AUEventListenerNotify instead of NULL 
-	}
-}
-
--(void) handleMouseUp: (NSNotification *) aNotification {
-	if ([aNotification object] == uiParam1Slider) {
-		AudioUnitEvent event;
-		event.mArgument.mParameter = mParameter[0];
-		event.mEventType = kAudioUnitEvent_EndParameterChangeGesture;
-	
-		AUEventListenerNotify (NULL, self, &event);		// NOTE, if you have an AUEventListenerRef because you are listening to event notification, 
-														// pass that as the first argument to AUEventListenerNotify instead of NULL 
-	}
-}
-
 
 #pragma mark ____ PRIVATE FUNCTIONS ____
 - (void)_addListeners {
@@ -408,6 +363,7 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
    	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(handleMouseDown:) name:SpikeAudioUnit_GestureSliderMouseDownNotification object: uiParam1Slider];
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(handleMouseUp:) name:SpikeAudioUnit_GestureSliderMouseUpNotification object: uiParam1Slider];
 }
+
 
 - (void)_removeListeners {
 
@@ -441,6 +397,7 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 }
 
 #pragma mark ____ LISTENER CALLBACK DISPATCHEE ____
+
 - (void)_parameterListener:(void *)inObject parameter:(const AudioUnitParameter *)inParameter value:(Float32)inValue {
     //inObject ignored in this case.
     
@@ -448,7 +405,6 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
     
 	switch (inParameter->mParameterID) {
 		case kThresholdParam:
-
             [self setTriggerThresholdSilent:inValue];
             break;
         case kMinAmplitudeViewParam:

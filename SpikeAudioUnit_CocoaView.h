@@ -73,6 +73,8 @@
 	AudioUnitParameter		mParameter[kNumberOfParameters];
     AUParameterListenerRef	mParameterListener;
     
+    // A zeromq socket for announcing parameter changes made by this view
+    
     NSTimer * capture_timer;
     
     void *message_context;

@@ -36,6 +36,10 @@
 		3E0BECFB0898391C00E1F0F7 /* CAVectorUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3E0BECF80898391C00E1F0F7 /* CAVectorUnit.cpp */; };
 		3E0BECFC0898391C00E1F0F7 /* CAVectorUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E0BECF90898391C00E1F0F7 /* CAVectorUnit.h */; };
 		3E0BECFD0898391C00E1F0F7 /* CAVectorUnitTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E0BECFA0898391C00E1F0F7 /* CAVectorUnitTypes.h */; };
+		5C64453113A9028B0056AA53 /* ctl_message.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C64452F13A9028B0056AA53 /* ctl_message.pb.cc */; };
+		5C64453213A9028B0056AA53 /* ctl_message.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C64452F13A9028B0056AA53 /* ctl_message.pb.cc */; };
+		5C64453313A9028B0056AA53 /* ctl_message.pb.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C64453013A9028B0056AA53 /* ctl_message.pb.h */; };
+		5C64453413A9028B0056AA53 /* ctl_message.pb.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C64453013A9028B0056AA53 /* ctl_message.pb.h */; };
 		5CC630ED11C81272000AB17E /* MIDIEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC630EB11C81272000AB17E /* MIDIEndpoint.h */; };
 		5CC630EE11C81272000AB17E /* MIDIEndpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC630EC11C81272000AB17E /* MIDIEndpoint.cpp */; };
 		5CC630F211C817D4000AB17E /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CC630F111C817D4000AB17E /* CoreMIDI.framework */; };
@@ -164,6 +168,8 @@
 		3E0BECF90898391C00E1F0F7 /* CAVectorUnit.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CAVectorUnit.h; sourceTree = "<group>"; };
 		3E0BECFA0898391C00E1F0F7 /* CAVectorUnitTypes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CAVectorUnitTypes.h; sourceTree = "<group>"; };
 		5C64452E13A7F9BA0056AA53 /* ctl_message.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ctl_message.proto; sourceTree = "<group>"; };
+		5C64452F13A9028B0056AA53 /* ctl_message.pb.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ctl_message.pb.cc; sourceTree = "<group>"; };
+		5C64453013A9028B0056AA53 /* ctl_message.pb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ctl_message.pb.h; sourceTree = "<group>"; };
 		5CC630EB11C81272000AB17E /* MIDIEndpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIEndpoint.h; sourceTree = "<group>"; };
 		5CC630EC11C81272000AB17E /* MIDIEndpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MIDIEndpoint.cpp; sourceTree = "<group>"; };
 		5CC630F111C817D4000AB17E /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
@@ -179,12 +185,12 @@
 		5CC6337D11CA37FD000AB17E /* CocoaGLStringRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CocoaGLStringRenderer.h; sourceTree = "<group>"; };
 		5CC6337E11CA37FD000AB17E /* GLStringRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GLStringRenderer.cpp; sourceTree = "<group>"; };
 		5CC6337F11CA37FD000AB17E /* GLStringRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLStringRenderer.h; sourceTree = "<group>"; };
-		5CC6338C11CA3A3A000AB17E /* SpikeRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpikeRenderer.cpp; sourceTree = "<group>"; };
-		5CC6338D11CA3A3A000AB17E /* SpikeRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpikeRenderer.h; sourceTree = "<group>"; };
-		5CC6338E11CA3A3A000AB17E /* SpikeWave.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpikeWave.cpp; sourceTree = "<group>"; };
-		5CC6338F11CA3A3A000AB17E /* SpikeWave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpikeWave.h; sourceTree = "<group>"; };
-		5CC6339011CA3A3A000AB17E /* SpikeWaveView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpikeWaveView.h; sourceTree = "<group>"; };
-		5CC6339111CA3A3A000AB17E /* SpikeWaveView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpikeWaveView.m; sourceTree = "<group>"; };
+		5CC6338C11CA3A3A000AB17E /* SpikeRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpikeRenderer.cpp; path = "spike-visualization/SpikeRenderer.cpp"; sourceTree = "<group>"; };
+		5CC6338D11CA3A3A000AB17E /* SpikeRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpikeRenderer.h; path = "spike-visualization/SpikeRenderer.h"; sourceTree = "<group>"; };
+		5CC6338E11CA3A3A000AB17E /* SpikeWave.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpikeWave.cpp; path = "spike-visualization/SpikeWave.cpp"; sourceTree = "<group>"; };
+		5CC6338F11CA3A3A000AB17E /* SpikeWave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpikeWave.h; path = "spike-visualization/SpikeWave.h"; sourceTree = "<group>"; };
+		5CC6339011CA3A3A000AB17E /* SpikeWaveView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpikeWaveView.h; path = "spike-visualization/SpikeWaveView.h"; sourceTree = "<group>"; };
+		5CC6339111CA3A3A000AB17E /* SpikeWaveView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpikeWaveView.m; path = "spike-visualization/SpikeWaveView.m"; sourceTree = "<group>"; };
 		5CC633C211CA543B000AB17E /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		5CD6A51A122B1F680090BF78 /* spike_wave.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spike_wave.proto; sourceTree = "<group>"; };
 		5CD6A53D122B21CE0090BF78 /* spike_wave.pb.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = spike_wave.pb.cc; sourceTree = "<group>"; };
@@ -330,6 +336,8 @@
 		5CC6333F11C9A6CD000AB17E /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				5C64452F13A9028B0056AA53 /* ctl_message.pb.cc */,
+				5C64453013A9028B0056AA53 /* ctl_message.pb.h */,
 				5CD6A53D122B21CE0090BF78 /* spike_wave.pb.cc */,
 				5CD6A53E122B21CE0090BF78 /* spike_wave.pb.h */,
 				5CC6334011C9A6E7000AB17E /* SharedTypes.h */,
@@ -480,6 +488,7 @@
 				5CC6339511CA3A3A000AB17E /* SpikeWave.h in Headers */,
 				5CC6339611CA3A3A000AB17E /* SpikeWaveView.h in Headers */,
 				5CD6A542122B21CE0090BF78 /* spike_wave.pb.h in Headers */,
+				5C64453413A9028B0056AA53 /* ctl_message.pb.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -514,6 +523,7 @@
 				5CC6325011C92985000AB17E /* CABufferList.h in Headers */,
 				5CC6334111C9A6E7000AB17E /* SharedTypes.h in Headers */,
 				5CD6A540122B21CE0090BF78 /* spike_wave.pb.h in Headers */,
+				5C64453313A9028B0056AA53 /* ctl_message.pb.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -676,6 +686,7 @@
 				5CC6339411CA3A3A000AB17E /* SpikeWave.cpp in Sources */,
 				5CC6339711CA3A3A000AB17E /* SpikeWaveView.m in Sources */,
 				5CD6A541122B21CE0090BF78 /* spike_wave.pb.cc in Sources */,
+				5C64453213A9028B0056AA53 /* ctl_message.pb.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -703,6 +714,7 @@
 				5CC631E211C91235000AB17E /* CARingBuffer.cpp in Sources */,
 				5CC6325611C929EF000AB17E /* CABufferList.cpp in Sources */,
 				5CD6A53F122B21CE0090BF78 /* spike_wave.pb.cc in Sources */,
+				5C64453113A9028B0056AA53 /* ctl_message.pb.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

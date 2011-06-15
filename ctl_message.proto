@@ -9,6 +9,6 @@ message CtlMessage {
     AUTOTHRESHOLD_FACTOR = 3;
   }
   optional MessageType message_type = 3;
-  optional float64 value = 4;
+  optional double value = 4;
 
 }

@@ -43,7 +43,6 @@ TESTING
 */
 
 #include "SpikeAudioUnit.h"
-#include "spike_wave.pb.h"
 #include <iostream>
 #include <math.h>
 
@@ -332,16 +331,7 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
 
     
     int fresh_spikes = 0;
-    
-//    static int frames_since_last_update = 0;
-//    static float crest_factor = 0.0; 
-//    static float sample_sum = 0.0;
-//    static float sample_sumsq = 0.0;
-//    static int autothresholding_count = 0;
-//    static bool autothresholding_armed = false;
-//    static int n_autothreshold_samples = 0;
-    
-    
+        
     bool autothreshold_high = GetParameter(kAutoThresholdHighParam);
     bool autothreshold_low = GetParameter(kAutoThresholdLowParam);
     
@@ -359,15 +349,14 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
         
         if(autothreshold_low){
             crest_factor *= -1;
-            //setGlobalParameter(kAutoThresholdLowParam, false);
-        } else {
-            //setGlobalParameter(kAutoThresholdHighParam, false);
         }
         
     }
         
-    
     #define MIN_FRAMES_BETWEEN_UPDATES  4000
+    
+    
+    checkCtlMessages();
     
 	while (nSampleFrames-- > 0) {
         
@@ -405,13 +394,16 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
             float new_thresh = (crest_factor * sample_std) / (GetParameter(kUnitsPerVoltParam) * GetParameter(kGainParam));
             setGlobalParameter(kThresholdParam, new_thresh);
             
+            // dispatch a zeromq ctl event
+            sendCtlMessage(frame_number, kThresholdParam, new_thresh);
+                        
+            
             float dir = 1.0;
             if(new_thresh < 0.0){
                 dir = -1.0;
             }
             setGlobalParameter(kMaxAmplitudeViewParam, dir * new_thresh * 2.);//1.2);
             setGlobalParameter(kMinAmplitudeViewParam, dir * new_thresh * -2.);//-1.2);
-            //std::cerr << "set threshold to: " << new_thresh << std::endl;
         }
         
         if(pending_trigger > 0){  // trigger is pending
@@ -459,13 +451,7 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
             if(frame_number % 1000 == 0){
                 //std::cerr << channel_id << std::endl;
             }
-            
-            
-#ifdef EMIT_MIDI
-            midi_endpoint->sendMessage(0x90, 0x00, 0x7F);
-            midi_endpoint->sendMessage(0x8F, 0x00, 0x7F);
-#endif
-            
+                        
             pending_trigger = -1; // rearm
             refractory_count = 5;
         
