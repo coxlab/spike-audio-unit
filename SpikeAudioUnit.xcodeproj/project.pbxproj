@@ -36,10 +36,6 @@
 		3E0BECFB0898391C00E1F0F7 /* CAVectorUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3E0BECF80898391C00E1F0F7 /* CAVectorUnit.cpp */; };
 		3E0BECFC0898391C00E1F0F7 /* CAVectorUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E0BECF90898391C00E1F0F7 /* CAVectorUnit.h */; };
 		3E0BECFD0898391C00E1F0F7 /* CAVectorUnitTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E0BECFA0898391C00E1F0F7 /* CAVectorUnitTypes.h */; };
-		5C64453113A9028B0056AA53 /* ctl_message.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C64452F13A9028B0056AA53 /* ctl_message.pb.cc */; };
-		5C64453213A9028B0056AA53 /* ctl_message.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C64452F13A9028B0056AA53 /* ctl_message.pb.cc */; };
-		5C64453313A9028B0056AA53 /* ctl_message.pb.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C64453013A9028B0056AA53 /* ctl_message.pb.h */; };
-		5C64453413A9028B0056AA53 /* ctl_message.pb.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C64453013A9028B0056AA53 /* ctl_message.pb.h */; };
 		5CC630ED11C81272000AB17E /* MIDIEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC630EB11C81272000AB17E /* MIDIEndpoint.h */; };
 		5CC630EE11C81272000AB17E /* MIDIEndpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC630EC11C81272000AB17E /* MIDIEndpoint.cpp */; };
 		5CC630F211C817D4000AB17E /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CC630F111C817D4000AB17E /* CoreMIDI.framework */; };
@@ -63,10 +59,10 @@
 		5CC6339611CA3A3A000AB17E /* SpikeWaveView.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC6339011CA3A3A000AB17E /* SpikeWaveView.h */; };
 		5CC6339711CA3A3A000AB17E /* SpikeWaveView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CC6339111CA3A3A000AB17E /* SpikeWaveView.m */; };
 		5CC633D611CA5452000AB17E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CC633C211CA543B000AB17E /* OpenGL.framework */; };
-		5CD6A53F122B21CE0090BF78 /* spike_wave.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CD6A53D122B21CE0090BF78 /* spike_wave.pb.cc */; };
-		5CD6A540122B21CE0090BF78 /* spike_wave.pb.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CD6A53E122B21CE0090BF78 /* spike_wave.pb.h */; };
-		5CD6A541122B21CE0090BF78 /* spike_wave.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CD6A53D122B21CE0090BF78 /* spike_wave.pb.cc */; };
-		5CD6A542122B21CE0090BF78 /* spike_wave.pb.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CD6A53E122B21CE0090BF78 /* spike_wave.pb.h */; };
+		5CC8CCA113A9565E004B6AE6 /* ctl_message.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CC8CC9D13A9565E004B6AE6 /* ctl_message.pb.cc */; };
+		5CC8CCA213A9565E004B6AE6 /* ctl_message.pb.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC8CC9E13A9565E004B6AE6 /* ctl_message.pb.h */; };
+		5CC8CCA313A9565E004B6AE6 /* spike_wave.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CC8CC9F13A9565E004B6AE6 /* spike_wave.pb.cc */; };
+		5CC8CCA413A9565E004B6AE6 /* spike_wave.pb.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC8CCA013A9565E004B6AE6 /* spike_wave.pb.h */; };
 		8B41193E0749636600361ABE /* SpikeAudioUnit.r in Rez */ = {isa = PBXBuildFile; fileRef = 8BA05A680720730100365D66 /* SpikeAudioUnit.r */; };
 		8BA05A6B0720730100365D66 /* SpikeAudioUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8BA05A660720730100365D66 /* SpikeAudioUnit.cpp */; };
 		8BA05A6E0720730100365D66 /* SpikeAudioUnitVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BA05A690720730100365D66 /* SpikeAudioUnitVersion.h */; };
@@ -167,9 +163,7 @@
 		3E0BECF80898391C00E1F0F7 /* CAVectorUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CAVectorUnit.cpp; sourceTree = "<group>"; };
 		3E0BECF90898391C00E1F0F7 /* CAVectorUnit.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CAVectorUnit.h; sourceTree = "<group>"; };
 		3E0BECFA0898391C00E1F0F7 /* CAVectorUnitTypes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CAVectorUnitTypes.h; sourceTree = "<group>"; };
-		5C64452E13A7F9BA0056AA53 /* ctl_message.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ctl_message.proto; sourceTree = "<group>"; };
-		5C64452F13A9028B0056AA53 /* ctl_message.pb.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ctl_message.pb.cc; sourceTree = "<group>"; };
-		5C64453013A9028B0056AA53 /* ctl_message.pb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ctl_message.pb.h; sourceTree = "<group>"; };
+		5C64452E13A7F9BA0056AA53 /* ctl_message.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ctl_message.proto; path = "spike-visualization/ctl_message.proto"; sourceTree = "<group>"; };
 		5CC630EB11C81272000AB17E /* MIDIEndpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIEndpoint.h; sourceTree = "<group>"; };
 		5CC630EC11C81272000AB17E /* MIDIEndpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MIDIEndpoint.cpp; sourceTree = "<group>"; };
 		5CC630F111C817D4000AB17E /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
@@ -192,9 +186,11 @@
 		5CC6339011CA3A3A000AB17E /* SpikeWaveView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpikeWaveView.h; path = "spike-visualization/SpikeWaveView.h"; sourceTree = "<group>"; };
 		5CC6339111CA3A3A000AB17E /* SpikeWaveView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpikeWaveView.m; path = "spike-visualization/SpikeWaveView.m"; sourceTree = "<group>"; };
 		5CC633C211CA543B000AB17E /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
-		5CD6A51A122B1F680090BF78 /* spike_wave.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spike_wave.proto; sourceTree = "<group>"; };
-		5CD6A53D122B21CE0090BF78 /* spike_wave.pb.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = spike_wave.pb.cc; sourceTree = "<group>"; };
-		5CD6A53E122B21CE0090BF78 /* spike_wave.pb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spike_wave.pb.h; sourceTree = "<group>"; };
+		5CC8CC9D13A9565E004B6AE6 /* ctl_message.pb.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ctl_message.pb.cc; sourceTree = "<group>"; };
+		5CC8CC9E13A9565E004B6AE6 /* ctl_message.pb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ctl_message.pb.h; sourceTree = "<group>"; };
+		5CC8CC9F13A9565E004B6AE6 /* spike_wave.pb.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = spike_wave.pb.cc; sourceTree = "<group>"; };
+		5CC8CCA013A9565E004B6AE6 /* spike_wave.pb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spike_wave.pb.h; sourceTree = "<group>"; };
+		5CD6A51A122B1F680090BF78 /* spike_wave.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = spike_wave.proto; path = "spike-visualization/spike_wave.proto"; sourceTree = "<group>"; };
 		8BA05A660720730100365D66 /* SpikeAudioUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SpikeAudioUnit.cpp; sourceTree = "<group>"; };
 		8BA05A670720730100365D66 /* SpikeAudioUnit.exp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.exports; path = SpikeAudioUnit.exp; sourceTree = "<group>"; };
 		8BA05A680720730100365D66 /* SpikeAudioUnit.r */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.rez; path = SpikeAudioUnit.r; sourceTree = "<group>"; };
@@ -336,10 +332,10 @@
 		5CC6333F11C9A6CD000AB17E /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				5C64452F13A9028B0056AA53 /* ctl_message.pb.cc */,
-				5C64453013A9028B0056AA53 /* ctl_message.pb.h */,
-				5CD6A53D122B21CE0090BF78 /* spike_wave.pb.cc */,
-				5CD6A53E122B21CE0090BF78 /* spike_wave.pb.h */,
+				5CC8CC9D13A9565E004B6AE6 /* ctl_message.pb.cc */,
+				5CC8CC9E13A9565E004B6AE6 /* ctl_message.pb.h */,
+				5CC8CC9F13A9565E004B6AE6 /* spike_wave.pb.cc */,
+				5CC8CCA013A9565E004B6AE6 /* spike_wave.pb.h */,
 				5CC6334011C9A6E7000AB17E /* SharedTypes.h */,
 				5CD6A51A122B1F680090BF78 /* spike_wave.proto */,
 				5C64452E13A7F9BA0056AA53 /* ctl_message.proto */,
@@ -487,8 +483,6 @@
 				5CC6339311CA3A3A000AB17E /* SpikeRenderer.h in Headers */,
 				5CC6339511CA3A3A000AB17E /* SpikeWave.h in Headers */,
 				5CC6339611CA3A3A000AB17E /* SpikeWaveView.h in Headers */,
-				5CD6A542122B21CE0090BF78 /* spike_wave.pb.h in Headers */,
-				5C64453413A9028B0056AA53 /* ctl_message.pb.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -522,8 +516,8 @@
 				5CC631E411C91235000AB17E /* CAThreadSafeList.h in Headers */,
 				5CC6325011C92985000AB17E /* CABufferList.h in Headers */,
 				5CC6334111C9A6E7000AB17E /* SharedTypes.h in Headers */,
-				5CD6A540122B21CE0090BF78 /* spike_wave.pb.h in Headers */,
-				5C64453313A9028B0056AA53 /* ctl_message.pb.h in Headers */,
+				5CC8CCA213A9565E004B6AE6 /* ctl_message.pb.h in Headers */,
+				5CC8CCA413A9565E004B6AE6 /* spike_wave.pb.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -655,7 +649,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# shell script goes here\necho ${SRCROOT}\nrm -f ${SRCROOT}/spike_wave.pb.*\nrm -f ${SRCROOT}/ctl_message.pb.*\ncd ${SRCROOT}\n/usr/local/bin/protoc --proto_path=./ --cpp_out=./ spike_wave.proto\n/usr/local/bin/protoc --proto_path=./ --cpp_out=./ ctl_message.proto\nexit 0";
+			shellScript = "# shell script goes here\nPROTOROOT=${SRCROOT}/spike-visualization\necho ${PROTOROOT}\nrm -f ${PROTOROOT}/../spike_wave.pb.*\nrm -f ${PROTOROOT}/../ctl_message.pb.*\ncd ${PROTOROOT}\n/usr/local/bin/protoc --proto_path=./ --cpp_out=../ spike_wave.proto\n/usr/local/bin/protoc --proto_path=./ --cpp_out=../ ctl_message.proto\nexit 0";
 		};
 		687C66CF122C306F007D82E2 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -685,8 +679,6 @@
 				5CC6339211CA3A3A000AB17E /* SpikeRenderer.cpp in Sources */,
 				5CC6339411CA3A3A000AB17E /* SpikeWave.cpp in Sources */,
 				5CC6339711CA3A3A000AB17E /* SpikeWaveView.m in Sources */,
-				5CD6A541122B21CE0090BF78 /* spike_wave.pb.cc in Sources */,
-				5C64453213A9028B0056AA53 /* ctl_message.pb.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -713,8 +705,8 @@
 				5CC630EE11C81272000AB17E /* MIDIEndpoint.cpp in Sources */,
 				5CC631E211C91235000AB17E /* CARingBuffer.cpp in Sources */,
 				5CC6325611C929EF000AB17E /* CABufferList.cpp in Sources */,
-				5CD6A53F122B21CE0090BF78 /* spike_wave.pb.cc in Sources */,
-				5C64453113A9028B0056AA53 /* ctl_message.pb.cc in Sources */,
+				5CC8CCA113A9565E004B6AE6 /* ctl_message.pb.cc in Sources */,
+				5CC8CCA313A9565E004B6AE6 /* spike_wave.pb.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
