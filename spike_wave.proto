@@ -1,6 +1,0 @@
-message SpikeWaveBuffer {
-  optional int32 channel_id = 1;
-  optional int64 time_stamp = 2;
-  
-  repeated float wave_sample = 3 [packed=true];
-}
