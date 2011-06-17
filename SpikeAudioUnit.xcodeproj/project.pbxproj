@@ -24,6 +24,7 @@
 			buildPhases = (
 			);
 			dependencies = (
+				5CBED00513ABD5DC00CEEB19 /* PBXTargetDependency */,
 				685E48C51226ED69004D34CA /* PBXTargetDependency */,
 				685E48C31226ED67004D34CA /* PBXTargetDependency */,
 			);
@@ -36,6 +37,8 @@
 		3E0BECFB0898391C00E1F0F7 /* CAVectorUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3E0BECF80898391C00E1F0F7 /* CAVectorUnit.cpp */; };
 		3E0BECFC0898391C00E1F0F7 /* CAVectorUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E0BECF90898391C00E1F0F7 /* CAVectorUnit.h */; };
 		3E0BECFD0898391C00E1F0F7 /* CAVectorUnitTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E0BECFA0898391C00E1F0F7 /* CAVectorUnitTypes.h */; };
+		5CBED00613ABD61D00CEEB19 /* spike_wave.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CC8CC9F13A9565E004B6AE6 /* spike_wave.pb.cc */; };
+		5CBED00713ABD62100CEEB19 /* spike_wave.pb.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC8CCA013A9565E004B6AE6 /* spike_wave.pb.h */; };
 		5CC630ED11C81272000AB17E /* MIDIEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC630EB11C81272000AB17E /* MIDIEndpoint.h */; };
 		5CC630EE11C81272000AB17E /* MIDIEndpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC630EC11C81272000AB17E /* MIDIEndpoint.cpp */; };
 		5CC630F211C817D4000AB17E /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CC630F111C817D4000AB17E /* CoreMIDI.framework */; };
@@ -115,6 +118,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		5CBED00413ABD5DC00CEEB19 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5CD6A52B122B20B10090BF78;
+			remoteInfo = generate_protocol_buffer;
+		};
 		5CD6A543122B21D70090BF78 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
@@ -483,6 +493,7 @@
 				5CC6339311CA3A3A000AB17E /* SpikeRenderer.h in Headers */,
 				5CC6339511CA3A3A000AB17E /* SpikeWave.h in Headers */,
 				5CC6339611CA3A3A000AB17E /* SpikeWaveView.h in Headers */,
+				5CBED00713ABD62100CEEB19 /* spike_wave.pb.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -679,6 +690,7 @@
 				5CC6339211CA3A3A000AB17E /* SpikeRenderer.cpp in Sources */,
 				5CC6339411CA3A3A000AB17E /* SpikeWave.cpp in Sources */,
 				5CC6339711CA3A3A000AB17E /* SpikeWaveView.m in Sources */,
+				5CBED00613ABD61D00CEEB19 /* spike_wave.pb.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -713,6 +725,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		5CBED00513ABD5DC00CEEB19 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5CD6A52B122B20B10090BF78 /* generate_protocol_buffer */;
+			targetProxy = 5CBED00413ABD5DC00CEEB19 /* PBXContainerItemProxy */;
+		};
 		5CD6A544122B21D70090BF78 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5CD6A52B122B20B10090BF78 /* generate_protocol_buffer */;
