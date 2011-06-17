@@ -355,6 +355,11 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
         
     #define MIN_FRAMES_BETWEEN_UPDATES  4000
     
+    broadcast_update_counter--;
+    if(broadcast_update_counter <= 0){
+        announceState(frame_number);
+        broadcast_update_counter = 5;
+    }
     
     checkCtlMessages();
     
@@ -392,10 +397,9 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
                                     (sample_sum/n_autothreshold_samples) * (sample_sum/n_autothreshold_samples)) ;
             
             float new_thresh = (crest_factor * sample_std) / (GetParameter(kUnitsPerVoltParam) * GetParameter(kGainParam));
-            setGlobalParameter(kThresholdParam, new_thresh);
             
-            // dispatch a zeromq ctl event
-            sendCtlMessage(frame_number, kThresholdParam, new_thresh);
+            setGlobalParameter(kThresholdParam, new_thresh);
+            //sendCtlMessage(frame_number, kThresholdParam, new_thresh);
                         
             
             float dir = 1.0;

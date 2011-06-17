@@ -401,7 +401,7 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
 - (void)_parameterListener:(void *)inObject parameter:(const AudioUnitParameter *)inParameter value:(Float32)inValue {
     //inObject ignored in this case.
     
-    NSLog(@"notified of change: %d", *inParameter);
+    //NSLog(@"notified of change: %d", *inParameter);
     
 	switch (inParameter->mParameterID) {
 		case kThresholdParam:
@@ -453,20 +453,13 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
     
     // construct the url
     ostringstream filename_stream, url_stream;
+
+
+    #define HOST_ADDRESS "tcp://127.0.0.1" 
+    #define SPIKE_BASE_PORT 8000
+
+    url_stream << HOST_ADDRESS << ":" << SPIKE_BASE_PORT + channel;
     
-    // hacky filesystem manipulation
-    filename_stream << "/tmp/spike_channels";
-    
-    string mkdir_command("mkdir -p ");
-    mkdir_command.append(filename_stream.str());
-    system(mkdir_command.c_str());
-    
-    filename_stream << "/" << channel;
-    string touch_command("touch ");
-    touch_command.append(filename_stream.str());
-    system(touch_command.c_str());
-    
-    url_stream << "ipc://" << filename_stream.str();
     
     int rc = zmq_connect(message_socket, url_stream.str().c_str());
     

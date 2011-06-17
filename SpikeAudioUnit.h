@@ -152,6 +152,8 @@ public:
             bool autothresholding_armed;
             int n_autothreshold_samples;
             
+            int broadcast_update_counter;
+            
         public:
             SpikeAudioUnitKernel(AUEffectBase *inAudioUnit ): AUKernelBase(inAudioUnit),
                                                               message_ctx(1){ 
@@ -163,6 +165,7 @@ public:
                 autothresholding_count = 0;
                 autothresholding_armed = false;
                 n_autothreshold_samples = 0;
+                broadcast_update_counter = 0;
                                                                   
                 
                 capture_buffer.Allocate(1, sizeof(Float32), DEFAULT_BUFFER_SIZE);//2048);
@@ -218,8 +221,20 @@ public:
                 
                 AUEventListenerNotify(NULL, NULL, &myEvent);
                 
+                sendCtlMessage(0, param_id, (double)val);
+                
             }
             
+            void announceState(long frame_number){
+                
+                #define ANNOUNCE_PARAM(P)   sendCtlMessage(frame_number, P, GetParameter(P))
+                ANNOUNCE_PARAM(kThresholdParam);
+                ANNOUNCE_PARAM(kMaxAmplitudeViewParam);
+                ANNOUNCE_PARAM(kMinAmplitudeViewParam);
+                ANNOUNCE_PARAM(kMinTimeViewParam);
+                ANNOUNCE_PARAM(kMaxTimeViewParam);
+            
+            }
             
             void sendCtlMessage(long frame_number, int param, double value){
                 
@@ -227,8 +242,16 @@ public:
                 ctl_msg.set_channel_id(channel_id);
                 ctl_msg.set_time_stamp(frame_number);
 
-                if(param = kThresholdParam){
-                    ctl_msg.set_message_type(CtlMessage::THRESHOLD);
+                switch(param){
+                    case kThresholdParam:
+                        ctl_msg.set_message_type(CtlMessage::THRESHOLD);
+                        break;
+                    case kMaxAmplitudeViewParam:
+                        ctl_msg.set_message_type(CtlMessage::AMPLITUDE_MAX);
+                        break;
+                    case kMinAmplitudeViewParam:
+                        ctl_msg.set_message_type(CtlMessage::AMPLITUDE_MIN);
+                        break;
                 }
                 ctl_msg.set_value(value);
                 
@@ -310,6 +333,14 @@ public:
             shared_ptr<zmq::socket_t> ctl_send_socket;
         
             int channel_id;
+            
+            
+            
+            #define HOST_ADDRESS "tcp://127.0.0.1" 
+            #define SPIKE_BASE_PORT 8000
+            #define CTL_IN_BASE_PORT 9000
+            #define CTL_OUT_BASE_PORT 10000
+
         
             void connectChannelSocket(int channel_id){
                 
@@ -324,22 +355,25 @@ public:
                 // construct the url
                 ostringstream filename_stream, url_stream;
                 
-                // hacky filesystem manipulation
-                filename_stream << "/tmp/spike_channels";
-                
-                string mkdir_command("mkdir -p ");
-                mkdir_command.append(filename_stream.str());
-                system(mkdir_command.c_str());
-                
-                filename_stream << "/" << channel_id;
-                string touch_command("touch ");
-                touch_command.append(filename_stream.str());
-                system(touch_command.c_str());
-                
-                url_stream << "ipc://" << filename_stream.str();
+//                // hacky filesystem manipulation
+//                filename_stream << "/tmp/spike_channels";
+//                
+//                string mkdir_command("mkdir -p ");
+//                mkdir_command.append(filename_stream.str());
+//                system(mkdir_command.c_str());
+//                
+//                filename_stream << "/" << channel_id;
+//                string touch_command("touch ");
+//                touch_command.append(filename_stream.str());
+//                system(touch_command.c_str());
+//                
+//                url_stream << "ipc://" << filename_stream.str();
+
+                url_stream << HOST_ADDRESS << ":" << SPIKE_BASE_PORT + channel_id;
+
                 try {
                     message_socket->bind(url_stream.str().c_str());
-                    std::cerr << "ZMQ server bound successfully to " << url_stream.str() << std::endl;
+                    //std::cerr << "ZMQ server bound successfully to " << url_stream.str() << std::endl;
                 } catch (zmq::error_t& e) {
                     std::cerr << "ZMQ: " << e.what() << std::endl;
                 }
@@ -362,47 +396,23 @@ public:
                 // construct the url
                 ostringstream receive_filename_stream, send_filename_stream, receive_url_stream, send_url_stream;
                 
-                // hacky filesystem manipulation
-                receive_filename_stream << "/tmp/spike_channels/ctl";
-                send_filename_stream << receive_filename_stream.str();
-                
-                receive_filename_stream << "/in/" << channel_id;
-                send_filename_stream << "/out/" << channel_id;
-                
-                string mkdir_command("mkdir -p ");
-                mkdir_command.append(receive_filename_stream.str());
-                system(mkdir_command.c_str());
-
-                mkdir_command = "mkdir -p ";
-                mkdir_command.append(send_filename_stream.str());
-                system(mkdir_command.c_str());
-                
-                
-                
-                string touch_command("touch ");
-                touch_command.append(send_filename_stream.str());
-                system(touch_command.c_str());
-                
-                touch_command = "touch ";
-                touch_command.append(receive_filename_stream.str());
-                system(touch_command.c_str());
-                
+                                
                 // connect receive socket
-                receive_url_stream << "ipc://" << receive_filename_stream.str();
+                receive_url_stream << HOST_ADDRESS << ":" << CTL_IN_BASE_PORT + channel_id;
                 try {
                     ctl_receive_socket->connect(receive_url_stream.str().c_str());
-                    std::cerr << "ZMQ ctl client bound successfully to " << receive_url_stream.str() << std::endl;
+                    //std::cerr << "ZMQ ctl client bound successfully to " << receive_url_stream.str() << std::endl;
                 } catch (zmq::error_t& e) {
-                    std::cerr << "ZMQ (ctl receive): " << e.what() << std::endl;
+                    std::cerr << "ZMQ (ctl receive): " << receive_url_stream.str() << e.what() << std::endl;
                 }
                 
                 // bind send socket
-                send_url_stream << "ipc://" << send_filename_stream.str();
+                send_url_stream << HOST_ADDRESS << ":" << CTL_OUT_BASE_PORT + channel_id;
                 try {
                     ctl_send_socket->bind(send_url_stream.str().c_str());
-                    std::cerr << "ZMQ ctl server bound successfully to " << send_url_stream.str() << std::endl;
+                    //std::cerr << "ZMQ ctl server bound successfully to " << send_url_stream.str() << std::endl;
                 } catch (zmq::error_t& e) {
-                    std::cerr << "ZMQ (ctl send): " << e.what() << std::endl;
+                    std::cerr << "ZMQ (ctl send): " << "[" << send_url_stream.str() << "] " << e.what() << std::endl;
                 }
 
                 
