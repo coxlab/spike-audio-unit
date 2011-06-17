@@ -208,7 +208,7 @@ public:
             virtual void		Reset();
 		
                 
-            void setGlobalParameter(AudioUnitParameterID param_id, AudioUnitParameterValue val){
+            void setGlobalParameter(AudioUnitParameterID param_id, AudioUnitParameterValue val, bool silent = false){
                 mAudioUnit->SetParameter(param_id, val);
                 
                 AudioUnitEvent myEvent;
@@ -221,8 +221,9 @@ public:
                 
                 AUEventListenerNotify(NULL, NULL, &myEvent);
                 
-                sendCtlMessage(0, param_id, (double)val);
-                
+                if (! silent ){
+                    sendCtlMessage(0, param_id, (double)val);
+                }
             }
             
             void announceState(long frame_number){
@@ -252,6 +253,14 @@ public:
                     case kMinAmplitudeViewParam:
                         ctl_msg.set_message_type(CtlMessage::AMPLITUDE_MIN);
                         break;
+                    case kMinTimeViewParam:
+                        ctl_msg.set_message_type(CtlMessage::TIME_MIN);
+                        break;
+                    case kMaxTimeViewParam:
+                        ctl_msg.set_message_type(CtlMessage::TIME_MAX);
+                        break;
+                    default:
+                        return;
                 }
                 ctl_msg.set_value(value);
                 
@@ -286,7 +295,7 @@ public:
                     
                         case CtlMessage::THRESHOLD:
                             double new_thresh = ctl_msg.value();
-                            setGlobalParameter(kThresholdParam, new_thresh);
+                            setGlobalParameter(kThresholdParam, new_thresh, true);
                             break;
                     
                     }
