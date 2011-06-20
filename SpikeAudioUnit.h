@@ -237,16 +237,17 @@ public:
                 ANNOUNCE_PARAM(kUnitsPerVoltParam);
                 ANNOUNCE_PARAM(kGainParam);
                 ANNOUNCE_PARAM(kAutoThresholdHighParam);
-                ANNOUNCE_PARAM(kAutoThresholdLowParam);
+//                ANNOUNCE_PARAM(kAutoThresholdLowParam);  // hack
                 ANNOUNCE_PARAM(kAutoThresholdFactorParam);
             
             }
             
-            void sendCtlMessage(long frame_number, int param, double value){
+            void sendCtlMessage(long frame_number, int param, double _value){
                 
                 CtlMessage ctl_msg;
                 ctl_msg.set_channel_id(channel_id);
                 ctl_msg.set_time_stamp(frame_number);
+                double value = _value;
 
                 switch(param){
                     case kThresholdParam:
@@ -271,11 +272,19 @@ public:
                         ctl_msg.set_message_type(CtlMessage::GAIN);
                         break;
                     case kAutoThresholdHighParam:
-                        ctl_msg.set_message_type(CtlMessage::AUTOTHRESHOLD_HIGH);
+                        ctl_msg.set_message_type(CtlMessage::AUTOTHRESHOLD_STATE);
+                        // hack attack
+                        if( GetParameter(kAutoThresholdLowParam) ){
+                            value = -1.0;
+                        } else if(_value > 0.0){
+                            value = 1.0;
+                        } else {
+                            value = 0.0;
+                        }
                         break;
-                    case kAutoThresholdLowParam:
-                        ctl_msg.set_message_type(CtlMessage::AUTOTHRESHOLD_LOW);
-                        break;
+//                    case kAutoThresholdLowParam:
+//                        ctl_msg.set_message_type(CtlMessage::AUTOTHRESHOLD_LOW);
+//                        break;
                     default:
                         return;
                 }
@@ -332,17 +341,18 @@ public:
                         case CtlMessage::GAIN:
                             setGlobalParameter(kGainParam, ctl_msg.value(), true);
                             break;
-                        case CtlMessage::AUTOTHRESHOLD_HIGH:
-                            if(ctl_msg.value() > 0.0){
-                                boolval = true;
+                        case CtlMessage::AUTOTHRESHOLD_STATE:
+                            if(ctl_msg.value() > 0.5){
+                                setGlobalParameter(kAutoThresholdHighParam, true, true);
+                                setGlobalParameter(kAutoThresholdLowParam, false, true);
+                            } else if(ctl_msg.value() < -0.5){
+                                setGlobalParameter(kAutoThresholdLowParam, true, true);
+                                setGlobalParameter(kAutoThresholdHighParam, false, true);
+                            } else {
+                                setGlobalParameter(kAutoThresholdHighParam, false, true);
+                                setGlobalParameter(kAutoThresholdLowParam, false, true);
                             }
-                            setGlobalParameter(kAutoThresholdHighParam, boolval, true);
-                            break;
-                        case CtlMessage::AUTOTHRESHOLD_LOW:
-                            if(ctl_msg.value() > 0.0){
-                                boolval = false;
-                            }
-                            setGlobalParameter(kAutoThresholdLowParam, boolval, true);
+                            
                             break;
                         default:
                             break;
