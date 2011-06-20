@@ -234,6 +234,11 @@ public:
                 ANNOUNCE_PARAM(kMinAmplitudeViewParam);
                 ANNOUNCE_PARAM(kMinTimeViewParam);
                 ANNOUNCE_PARAM(kMaxTimeViewParam);
+                ANNOUNCE_PARAM(kUnitsPerVoltParam);
+                ANNOUNCE_PARAM(kGainParam);
+                ANNOUNCE_PARAM(kAutoThresholdHighParam);
+                ANNOUNCE_PARAM(kAutoThresholdLowParam);
+                ANNOUNCE_PARAM(kAutoThresholdFactorParam);
             
             }
             
@@ -258,6 +263,12 @@ public:
                         break;
                     case kMaxTimeViewParam:
                         ctl_msg.set_message_type(CtlMessage::TIME_MAX);
+                        break;
+                    case kUnitsPerVoltParam:
+                        ctl_msg.set_message_type(CtlMessage::UNITS_PER_VOLT);
+                        break;
+                    case kGainParam:
+                        ctl_msg.set_message_type(CtlMessage::GAIN);
                         break;
                     default:
                         return;
@@ -290,14 +301,39 @@ public:
                     CtlMessage ctl_msg;
                     ctl_msg.ParseFromString(data);
                     
+
                     // use setGlobalParameter as needed to update the global AU state
                     switch(ctl_msg.message_type()){
                     
                         case CtlMessage::THRESHOLD:
-                            double new_thresh = ctl_msg.value();
-                            setGlobalParameter(kThresholdParam, new_thresh, true);
+                            setGlobalParameter(kThresholdParam, ctl_msg.value(), true);
                             break;
-                    
+                        case CtlMessage::AMPLITUDE_MAX:
+                            setGlobalParameter(kMaxAmplitudeViewParam, ctl_msg.value(), true);
+                            break;
+                        case CtlMessage::AMPLITUDE_MIN:
+                            setGlobalParameter(kMinAmplitudeViewParam, ctl_msg.value(), true);
+                            break;
+                        case CtlMessage::TIME_MIN:
+                            setGlobalParameter(kMinTimeViewParam, ctl_msg.value(), true);
+                            break;
+                        case CtlMessage::TIME_MAX:
+                            setGlobalParameter(kMaxTimeViewParam, ctl_msg.value(), true);
+                            break;
+                        case CtlMessage::UNITS_PER_VOLT:
+                            setGlobalParameter(kUnitsPerVoltParam, ctl_msg.value(), true);
+                            break;
+                        case CtlMessage::GAIN:
+                            setGlobalParameter(kGainParam, ctl_msg.value(), true);
+                            break;
+                        case CtlMessage::AUTOTHRESHOLD_HIGH:
+                            setGlobalParameter(kAutoThresholdHighParam, ctl_msg.value(), true);
+                            break;
+                        case CtlMessage::AUTOTHRESHOLD_LOW:
+                            setGlobalParameter(kAutoThresholdLowParam, ctl_msg.value(), true);
+                            break;
+                        default:
+                            break;
                     }
 
                     

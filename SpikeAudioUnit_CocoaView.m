@@ -155,6 +155,7 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
     // Receive a message 
     rc = zmq_recv (message_socket, &msg, ZMQ_NOBLOCK);
     
+    int count = 0;
     
     while(rc == 0){
 
@@ -176,6 +177,12 @@ NSString *SpikeAudioUnit_GestureSliderMouseUpNotification = @"CAGestureSliderMou
         zmq_msg_close(&msg);
         rc = zmq_msg_init (&msg);
         assert (rc == 0);
+        
+        count++;
+        #define WAVE_HWM    200
+        if(count > WAVE_HWM){
+            break;
+        }
         
         rc = zmq_recv (message_socket, &msg, ZMQ_NOBLOCK);
     }

@@ -450,11 +450,7 @@ void SpikeAudioUnit::SpikeAudioUnitKernel::Process(	const Float32 	*inSourceP,
             
             
             fresh_spikes++;
-            
-            if(frame_number % 1000 == 0){
-                //std::cerr << channel_id << std::endl;
-            }
-                        
+                                    
             pending_trigger = -1; // rearm
             refractory_count = 5;
         
