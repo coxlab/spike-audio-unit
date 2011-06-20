@@ -270,6 +270,12 @@ public:
                     case kGainParam:
                         ctl_msg.set_message_type(CtlMessage::GAIN);
                         break;
+                    case kAutoThresholdHighParam:
+                        ctl_msg.set_message_type(CtlMessage::AUTOTHRESHOLD_HIGH);
+                        break;
+                    case kAutoThresholdLowParam:
+                        ctl_msg.set_message_type(CtlMessage::AUTOTHRESHOLD_LOW);
+                        break;
                     default:
                         return;
                 }
@@ -300,7 +306,7 @@ public:
                     string data((const char *)msg.data(), msg.size());
                     CtlMessage ctl_msg;
                     ctl_msg.ParseFromString(data);
-                    
+                    bool boolval = false;
 
                     // use setGlobalParameter as needed to update the global AU state
                     switch(ctl_msg.message_type()){
@@ -327,10 +333,16 @@ public:
                             setGlobalParameter(kGainParam, ctl_msg.value(), true);
                             break;
                         case CtlMessage::AUTOTHRESHOLD_HIGH:
-                            setGlobalParameter(kAutoThresholdHighParam, ctl_msg.value(), true);
+                            if(ctl_msg.value() > 0.0){
+                                boolval = true;
+                            }
+                            setGlobalParameter(kAutoThresholdHighParam, boolval, true);
                             break;
                         case CtlMessage::AUTOTHRESHOLD_LOW:
-                            setGlobalParameter(kAutoThresholdLowParam, ctl_msg.value(), true);
+                            if(ctl_msg.value() > 0.0){
+                                boolval = false;
+                            }
+                            setGlobalParameter(kAutoThresholdLowParam, boolval, true);
                             break;
                         default:
                             break;
